@@ -1,4 +1,5 @@
 Events = new Mongo.Collection("events");
+Workouts = new Mongo.Collection("workouts");
 
 if (Meteor.isClient) {
     // This code is executed on the client only
@@ -19,21 +20,38 @@ if (Meteor.isServer) {
         return Events.find({
             owner: this.userId
         })
-    })
+    });
+    Meteor.publish("workouts", function() {
+        return Workouts.find({
+            owner: this.userId
+        })
+    });
 }
 
 Meteor.methods({
-    addEvent(title, description, workoutDescription, startTime, duration) {
+    addEvent(title, description, startTime) {
         // Only logged in users can create events
         if (!Meteor.userId()) {
             throw new Meteor.Error("not-authorized");
         }
 
-        Events.insert({
+        return Events.insert({
             title: title,
             description: description,
-            workoutDescription: workoutDescription,
             startTime: startTime,
+            owner: Meteor.userId()
+        });
+    },
+
+    addWorkout(eventId, description, duration) {
+        // Only logged in users can create events
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-authorized");
+        }
+
+        Workouts.insert({
+            eventId: eventId,
+            description: description,
             duration: duration,
             owner: Meteor.userId()
         });

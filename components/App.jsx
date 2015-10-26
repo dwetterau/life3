@@ -3,103 +3,39 @@ App = React.createClass({
 
     mixins: [ReactMeteorData],
 
-    getInitialState() {
-        return {
-            timeCursor: new Date(),
-            newWorkout: false
-        }
-    },
-
     getMeteorData() {
         return {
             events: Events.find({}).fetch(),
+            workouts: Workouts.find({}).fetch(),
             currentUser: Meteor.user()
         }
     },
 
-    createEvent() {
-        const titleField = React.findDOMNode(this.refs.titleInput);
-        const descriptionField = React.findDOMNode(this.refs.titleInput);
-
-        let workoutDescription = null;
-        let workoutField = null;
-        if (this.state.newWorkout) {
-            workoutField = React.findDOMNode(this.refs.workoutInput);
-            workoutDescription = workoutField.value
+    joinEvents() {
+        // This function joins all events with their associated workout information
+        let event_to_workout_list = new Map();
+        for (let workout of this.data.workouts) {
+            if (!event_to_workout_list.has(workout.eventId)) {
+                event_to_workout_list.set(workout.eventId, [])
+            }
+            event_to_workout_list.get(workout.eventId).push(workout)
         }
-
-        // TODO: allow this to be better specified
-        const startTime = new Date();
-
-        // TODO: allow this to be better specified
-        const duration = 60 * 60; // Hardcoded to be 1 hour in seconds
-
-        Meteor.call("addEvent",
-            // General fields
-            titleField.value,
-            descriptionField.value,
-
-            // Workout fields
-            workoutDescription,
-
-            // Time fields
-            startTime,
-            duration
-        );
-
-        titleField.value = '';
-        descriptionField.value = '';
-        if (workoutField) {
-            workoutField.value = '';
+        console.log(event_to_workout_list);
+        for (let event of this.data.events) {
+            if (!event_to_workout_list.has(event._id)) {
+                event.workouts = []
+            } else {
+                event.workouts = event_to_workout_list.get(event._id);
+            }
         }
-    },
-
-    toggleCreateWorkout() {
-        this.setState({newWorkout: !this.state.newWorkout});
-    },
-
-    renderCreateGeneralContent() {
-        return (
-            <div className="new-general-content">
-                <form>
-                    <input type="text" ref="titleInput" placeholder="Title" />
-                    <input type="text" ref="descriptionInput" placeholder="description" />
-                </form>
-            </div>
-        )
-    },
-
-    renderCreateWorkoutContent() {
-        if (!this.state.newWorkout) {
-            return (
-                <div className="add-workout-content" onClick={this.toggleCreateWorkout}>
-                    Click to add a workout!
-                </div>
-            )
-        }
-        return (
-            <div className="new-workout-content">
-                <form>
-                    <input type="text" ref="workoutInput" placeholder="Workout description" />
-                </form>
-                <div className="remove-workout-content" onClick={this.toggleCreateWorkout}>
-                    remove
-                </div>
-            </div>
-        )
-    },
-
-    renderCreateEventButton() {
-        return (
-            <div className="add-event-button" onClick={this.createEvent}>
-                Click to add your new event!
-            </div>
-        )
+        console.log(this.data.workouts);
+        console.log(this.data.events);
     },
 
     renderEvents() {
+        this.joinEvents();
         return this.data.events.map((event) => {
-           return <Event key={event._id} event={event} />;
+           return <Event event={event} />;
         });
     },
 
@@ -107,11 +43,7 @@ App = React.createClass({
         // This is only called if the user is logged in
         return (
             <div className="page-content">
-                <div className="event-container card">
-                    {this.renderCreateGeneralContent()}
-                    {this.renderCreateWorkoutContent()}
-                    {this.renderCreateEventButton()}
-                </div>
+                <CreateContent />
                 <div className="plan-container">
                     {this.renderEvents()}
                 </div>

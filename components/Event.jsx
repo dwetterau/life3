@@ -6,7 +6,10 @@ Event = React.createClass({
     render() {
         return (
             <div className="event-container">
+                {this.props.event.title}
                 {this.props.event.description}
+                {this.props.event.startTime}
+                {this.props.event.workouts}
             </div>
         );
     }
