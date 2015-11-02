@@ -1,1 +1,34 @@
-/* CSS declarations go here */
+html {
+  background-color: rgb(238, 238, 238);
+}
+
+.page-container header {
+  margin-bottom: 1em;
+}
+
+div.account-ui-wrapper {
+}
+
+h1.page-title {
+  font-size: 4em;
+  margin: auto;
+}
+
+div.card {
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .23), 0 3px 10px rgba(0, 0, 0, .16);
+  margin: 0 0 20px 0;
+  padding: 19px;
+  border-radius: 2px;
+  border: 0;
+  color: rgba(0,0,0,.84);
+  min-height: 20px;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  display: block;
+}
+
+div.page-container {
+  margin: auto;
+  width: 768px;
+}

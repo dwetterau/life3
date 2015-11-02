@@ -11,9 +11,14 @@ App = React.createClass({
     },
 
     renderEvents() {
-        return this.data.events.map((event) => {
-           return <Event event={event} />;
+        let rendered_events = [];
+        this.data.events.map((event) => {
+            rendered_events.push(<Event key={event._id} event={event} />);
         });
+
+        // We reverse here for rendering purposes. This might change.
+        rendered_events.reverse();
+        return rendered_events;
     },
 
     renderPage() {
@@ -21,7 +26,7 @@ App = React.createClass({
         return (
             <div className="page-content">
                 <CreateContent />
-                <div className="plan-container">
+                <div className="timeline-container">
                     {this.renderEvents()}
                 </div>
             </div>
@@ -30,11 +35,12 @@ App = React.createClass({
 
     render() {
         return (
-            <div className="container">
+            <div className="page-container">
                 <header>
-                    <h1>Fill</h1>
-
-                    <AccountsUIWrapper />
+                    <div className="account-ui-wrapper">
+                        <AccountsUIWrapper />
+                    </div>
+                    <h1 className="page-title">Fill</h1>
                 </header>
 
                 {this.data.currentUser ? this.renderPage() : ''}

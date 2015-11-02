@@ -81,7 +81,7 @@ CreateContent = React.createClass({
 
     render() {
         return (
-            <div className="event-container card">
+            <div className="create-event-container card">
                 {this.renderCreateGeneralContent()}
                 {this.renderCreateWorkoutContent()}
                 {this.renderCreateEventButton()}
