@@ -10,37 +10,30 @@ CreateContent = React.createClass({
         }
     },
 
-    createWorkout(eventId, description) {
-        let duration = 1 * 60 * 60; // Duration is 1 hour in seconds for now
-
-        Meteor.call("addWorkout", eventId, description, duration);
+    getNewWorkoutState() {
+        const workoutField = React.findDOMNode(this.refs.workoutInput);
+        const duration = 60 * 60; // duration is 1 hour in seconds for now
+        const workout = {
+            description: workoutField.value,
+            duration: duration
+        };
+        workoutField.value = '';
+        return workout;
     },
 
     createEvent() {
         const titleField = React.findDOMNode(this.refs.titleInput);
         const descriptionField = React.findDOMNode(this.refs.descriptionInput);
-
-        let workoutDescription = null;
-        let workoutField = null;
-        if (this.state.newWorkout) {
-            workoutField = React.findDOMNode(this.refs.workoutInput);
-            workoutDescription = workoutField.value
-        }
+        const workout = this.state.newWorkout ? this.getNewWorkoutState() : null;
 
         // TODO: allow this to be better specified
         const startTime = new Date();
 
-        Meteor.call("addEvent", titleField.value, descriptionField.value, startTime, function(error, result) {
-            if (this.state.newWorkout && !error) {
-                this.createWorkout(result, workoutDescription)
-            }
-        }.bind(this));
+        // TODO: check a prop value of the event id, if present, update instead
+        Meteor.call("addEvent", titleField.value, descriptionField.value, startTime, workout);
 
         titleField.value = '';
         descriptionField.value = '';
-        if (workoutField) {
-            workoutField.value = '';
-        }
     },
 
     toggleCreateWorkout() {

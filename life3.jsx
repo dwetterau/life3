@@ -29,7 +29,7 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    addEvent(title, description, startTime) {
+    addEvent(title, description, startTime, workout) {
         // Only logged in users can create events
         if (!Meteor.userId()) {
             throw new Meteor.Error("not-authorized");
@@ -39,20 +39,7 @@ Meteor.methods({
             title: title,
             description: description,
             startTime: startTime,
-            owner: Meteor.userId()
-        });
-    },
-
-    addWorkout(eventId, description, duration) {
-        // Only logged in users can create events
-        if (!Meteor.userId()) {
-            throw new Meteor.Error("not-authorized");
-        }
-
-        Workouts.insert({
-            eventId: eventId,
-            description: description,
-            duration: duration,
+            workout: workout,
             owner: Meteor.userId()
         });
     }
