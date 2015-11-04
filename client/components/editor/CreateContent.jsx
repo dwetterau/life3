@@ -40,11 +40,9 @@ CreateContent = React.createClass({
     renderCreateGeneralContent() {
         return (
             <div className="new-general-content">
-                <form>
-                    <input type="text" ref="titleInput" placeholder="Title"/>
-                    <input type="text" ref="descriptionInput" placeholder="description"/>
-                    <TextArea />
-                </form>
+                <input type="text" ref="titleInput" placeholder="Title"/>
+                <input type="text" ref="descriptionInput" placeholder="description"/>
+                <TextArea />
             </div>
         )
     },

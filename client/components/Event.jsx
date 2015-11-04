@@ -26,14 +26,11 @@ Event = React.createClass({
                     <div className="event-title">
                         {this.props.event.title}
                     </div>
-                    <div className="event-start-time">
-                        {this.props.event.startTime}
-                    </div>
                 </div>
                 <div className="event-body">
-                    <div className="event-description">
-                        {this.props.event.description}
-                    </div>
+                    <ReactMarkdown
+                        className="event-description"
+                        source={this.props.event.description} />
                     {this.renderWorkout()}
                 </div>
             </div>
