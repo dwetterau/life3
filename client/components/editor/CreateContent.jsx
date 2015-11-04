@@ -1,6 +1,3 @@
-/**
- * Created by david on 10/25/15.
- */
 CreateContent = React.createClass({
 
     getInitialState() {
@@ -46,6 +43,7 @@ CreateContent = React.createClass({
                 <form>
                     <input type="text" ref="titleInput" placeholder="Title"/>
                     <input type="text" ref="descriptionInput" placeholder="description"/>
+                    <TextArea />
                 </form>
             </div>
         )
