@@ -8,7 +8,7 @@ CreateContent = React.createClass({
     },
 
     getNewWorkoutState() {
-        const workoutField = React.findDOMNode(this.refs.workoutInput);
+        const workoutField = ReactDOM.findDOMNode(this.refs.workoutInput);
         const duration = 60 * 60; // duration is 1 hour in seconds for now
         const workout = {
             description: workoutField.value,
@@ -19,8 +19,8 @@ CreateContent = React.createClass({
     },
 
     createEvent() {
-        const titleField = React.findDOMNode(this.refs.titleInput);
-        const descriptionField = React.findDOMNode(this.refs.descriptionInput);
+        const titleField = ReactDOM.findDOMNode(this.refs.titleInput);
+        const descriptionField = ReactDOM.findDOMNode(this.refs.descriptionInput);
         const workout = this.state.newWorkout ? this.getNewWorkoutState() : null;
 
         // TODO: allow this to be better specified
