@@ -1,4 +1,7 @@
-CreateContent = React.createClass({
+EditContent = React.createClass({
+    propTypes: {
+        event: React.PropTypes.object.isRequired
+    },
 
     getInitialState() {
         return {
@@ -38,11 +41,14 @@ CreateContent = React.createClass({
     },
 
     renderCreateGeneralContent() {
+        const titlePlaceholder = "Title";
+        const descriptionPlaceholder = "Description";
         return (
-            <div className="new-general-content">
-                <input type="text" ref="titleInput" placeholder="Title"/>
-                <input type="text" ref="descriptionInput" placeholder="description"/>
-                <TextArea />
+            <div className="general-content-editor">
+                <input type="text" ref="titleInput" placeholder={titlePlaceholder}
+                       value={this.props.event.title}/>
+                <TextArea ref="descriptionInput" placeholder={descriptionPlaceholder}
+                          defaultValue={this.props.event.description} rows={4} />
             </div>
         )
     },
@@ -77,7 +83,7 @@ CreateContent = React.createClass({
 
     render() {
         return (
-            <div className="create-event-container card">
+            <div className="create-event-container">
                 {this.renderCreateGeneralContent()}
                 {this.renderCreateWorkoutContent()}
                 {this.renderCreateEventButton()}

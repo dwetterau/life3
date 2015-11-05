@@ -10,6 +10,13 @@ App = React.createClass({
         }
     },
 
+    getEmptyEvent() {
+        return {
+            description: "",
+            title: ""
+        };
+    },
+
     renderEvents() {
         let rendered_events = [];
         this.data.events.map((event) => {
@@ -25,7 +32,9 @@ App = React.createClass({
         // This is only called if the user is logged in
         return (
             <div className="page-content">
-                <CreateContent />
+                <div className="header-container card">
+                    <EditContent event={this.getEmptyEvent()} />
+                </div>
                 <div className="timeline-container">
                     {this.renderEvents()}
                 </div>

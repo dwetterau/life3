@@ -32,3 +32,13 @@ div.page-container {
   margin: auto;
   width: 768px;
 }
+
+div.general-content-editor {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+}
+
+div.general-content-editor input {
+  margin-bottom: 1em;
+}
