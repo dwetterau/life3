@@ -3,41 +3,39 @@ EditContent = React.createClass({
         event: React.PropTypes.object.isRequired
     },
 
+    contentTypes: {
+        text: "text",
+        budget: "budget"
+    },
+
     getInitialState() {
         return {
-            timeCursor: new Date(),
-            newWorkout: false
+            contentType: null
         }
     },
 
-    getNewWorkoutState() {
-        const workoutField = ReactDOM.findDOMNode(this.refs.workoutInput);
-        const duration = 60 * 60; // duration is 1 hour in seconds for now
-        const workout = {
-            description: workoutField.value,
-            duration: duration
-        };
-        workoutField.value = '';
-        return workout;
-    },
-
     createEvent() {
-        const titleField = ReactDOM.findDOMNode(this.refs.titleInput);
-        const descriptionField = ReactDOM.findDOMNode(this.refs.descriptionInput);
-        const workout = this.state.newWorkout ? this.getNewWorkoutState() : null;
+        if (this.state.contentType == this.contentTypes.text) {
+            const titleField = ReactDOM.findDOMNode(this.refs.titleInput);
+            const descriptionField = ReactDOM.findDOMNode(this.refs.descriptionInput);
 
-        // TODO: allow this to be better specified
-        const startTime = new Date();
+            // TODO: allow this to be better specified
+            const content = {
+                title: titleField.value,
+                description: descriptionField.value,
+                startTime: new Date()
+            };
 
-        // TODO: check a prop value of the event id, if present, update instead
-        Meteor.call("addEvent", titleField.value, descriptionField.value, startTime, workout);
+            // TODO: check a prop value of the event id, if present, update instead
+            Meteor.call("addEvent", content);
 
-        titleField.value = '';
-        descriptionField.value = '';
+            titleField.value = '';
+            descriptionField.value = '';
+        }
     },
 
-    toggleCreateWorkout() {
-        this.setState({newWorkout: !this.state.newWorkout});
+    selectContentType(contentType) {
+        this.setState({contentType: contentType});
     },
 
     renderCreateGeneralContent() {
@@ -46,29 +44,11 @@ EditContent = React.createClass({
         return (
             <div className="general-content-editor">
                 <input type="text" ref="titleInput" placeholder={titlePlaceholder}
-                       value={this.props.event.title}/>
+                       defaultValue={this.props.event.title}/>
                 <TextArea ref="descriptionInput" placeholder={descriptionPlaceholder}
                           defaultValue={this.props.event.description} rows={4} />
-            </div>
-        )
-    },
-
-    renderCreateWorkoutContent() {
-        if (!this.state.newWorkout) {
-            return (
-                <div className="add-workout-content" onClick={this.toggleCreateWorkout}>
-                    Click to add a workout!
-                </div>
-            )
-        }
-        return (
-            <div className="new-workout-content">
-                <form>
-                    <input type="text" ref="workoutInput" placeholder="Workout description"/>
-                </form>
-                <div className="remove-workout-content" onClick={this.toggleCreateWorkout}>
-                    remove
-                </div>
+                {this.renderEditorSelector()}
+                {this.renderCreateEventButton()}
             </div>
         )
     },
@@ -81,12 +61,36 @@ EditContent = React.createClass({
         )
     },
 
+    renderEditorSelectorTile(type) {
+        const className = "editor-selector-tile -" + type + ((type == this.state.contentType ? " -selected" : ""));
+        return (
+            <div key={type} className={className} onClick={this.selectContentType.bind(this, type)}>
+                {type[0].toUpperCase() + type.substr(1)}
+            </div>
+        )
+    },
+
+    renderEditorSelector() {
+        return (
+            <div className="editor-selector-container">
+                {Object.keys(this.contentTypes).map(this.renderEditorSelectorTile)}
+            </div>
+        )
+    },
+
+    renderEditor() {
+      if (!this.state.contentType) {
+          // Render the buttons to select the different types of content
+          return this.renderEditorSelector()
+      } else if (this.state.contentType == this.contentTypes.text) {
+          return this.renderCreateGeneralContent()
+      }
+    },
+
     render() {
         return (
             <div className="create-event-container">
-                {this.renderCreateGeneralContent()}
-                {this.renderCreateWorkoutContent()}
-                {this.renderCreateEventButton()}
+                {this.renderEditor()}
             </div>
         );
     }

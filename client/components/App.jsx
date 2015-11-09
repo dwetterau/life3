@@ -13,7 +13,8 @@ App = React.createClass({
     getEmptyEvent() {
         return {
             description: "",
-            title: ""
+            title: "",
+            type: "text"
         };
     },
 
