@@ -26,30 +26,14 @@ Event = React.createClass({
                     onClick={this.toggleEditMode}>{editText}</div>
     },
 
-    renderWorkout() {
-        if (!this.props.event.workout) {
-            return;
-        }
-        return (
-            <div className="workout-container">
-                <div className="workout-duration">
-                    {this.props.event.workout.duration}
-                </div>
-                <div className="workout-description">
-                    {this.props.event.workout.description},
-                </div>
-            </div>
-        )
-    },
-
     renderEvent() {
         if (!this.state.inEditMode) {
+            // TODO: Render events based on type.
             return (
                 <div className="event-body">
                     <ReactMarkdown
                         className="event-description"
                         source={this.getMarkdownContent()} />
-                    {this.renderWorkout()}
                 </div>
             )
         } else {

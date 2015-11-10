@@ -10,43 +10,158 @@ EditContent = React.createClass({
 
     getInitialState() {
         return {
-            contentType: null
+            contentType: this.props.event.type,
+            event: this.props.event
         }
     },
 
-    createEvent() {
-        if (this.state.contentType == this.contentTypes.text) {
-            const titleField = ReactDOM.findDOMNode(this.refs.titleInput);
-            const descriptionField = ReactDOM.findDOMNode(this.refs.descriptionInput);
-
-            // TODO: allow this to be better specified
-            const content = {
-                title: titleField.value,
-                description: descriptionField.value,
-                startTime: new Date()
-            };
-
-            // TODO: check a prop value of the event id, if present, update instead
-            Meteor.call("addEvent", content);
-
-            titleField.value = '';
-            descriptionField.value = '';
+    initializeAndGetItemRow(rowIndex) {
+        if (!this.state.event.itemRows) {
+            this.state.event.itemRows = [];
         }
+        if (this.state.event.itemRows[rowIndex] === undefined) {
+            if (rowIndex != this.state.event.itemRows.length) {
+                console.error("Adding a item row at a far away index", rowIndex, this.state.event.itemRows);
+            }
+            this.state.event.itemRows[rowIndex] = {
+                index: rowIndex,
+                description: "",
+                value: "000"
+            };
+        }
+        return this.state.event.itemRows[rowIndex];
+    },
+
+    handleTitleChange(e) {
+        this.state.event.title = e.target.value;
+        this.setState({event: this.state.event});
+    },
+
+    handleDescriptionChange(e) {
+        this.state.event.description = e.target.value;
+        this.setState({event: this.state.event});
+    },
+
+    handleItemRowDescriptionChange(rowIndex, e) {
+        let row = this.initializeAndGetItemRow(rowIndex);
+        row.description = e.target.value;
+        this.setState({event: this.state.event});
+    },
+
+    handleItemRowValueChange(rowIndex, e) {
+        let row = this.initializeAndGetItemRow(rowIndex);
+        // This value is in string format, we need to convert it to be in integer form.
+        const floatValue = parseFloat(e.target.value);
+        if (isNaN(floatValue)) {
+            return e.preventDefault();
+        }
+        row.value = Math.round(floatValue * 100);
+        this.setState({event: this.state.event});
+    },
+
+    createEvent() {
+        let content = {};
+        if (this.state.contentType == this.contentTypes.text) {
+            content = {
+                title: this.state.event.title,
+                description: this.state.event.description
+            };
+        } else if (this.state.contentType = this.contentTypes.budget) {
+            content = {
+                title: this.state.event.title,
+                itemRows: this.state.event.itemRows
+            }
+        }
+        // TODO: allow this to be better specified
+        content.startTime = new Date();
+        content.type = this.state.contentType;
+        // TODO: check a prop value of the event id, if present, update instead
+        Meteor.call("addEvent", content);
+
+        // Reset the editor to a blank event of the same type
+        this.setState({event: {type: this.state.contentType}})
     },
 
     selectContentType(contentType) {
         this.setState({contentType: contentType});
     },
 
-    renderCreateGeneralContent() {
-        const titlePlaceholder = "Title";
-        const descriptionPlaceholder = "Description";
+    computeNextBudgetRowIndex() {
+        if (!this.state.event.itemRows) {
+            return 0;
+        } else {
+            return this.state.event.itemRows.length;
+        }
+    },
+
+    renderCreateBudgetRow(row) {
+        const stringValue = row.value.toString();
+        const renderedValue = stringValue.substr(0, stringValue.length - 2) + "."
+            + stringValue.substr(stringValue.length - 2);
         return (
-            <div className="general-content-editor">
-                <input type="text" ref="titleInput" placeholder={titlePlaceholder}
-                       defaultValue={this.props.event.title}/>
-                <TextArea ref="descriptionInput" placeholder={descriptionPlaceholder}
-                          defaultValue={this.props.event.description} rows={4} />
+            <tr key={row.index}>
+                <td>
+                    <input type="text" placeholder="Description" defaultValue={row.description}
+                           onChange={this.handleItemRowDescriptionChange.bind(this, row.index)} />
+                </td>
+                <td>
+                    <input type="text" defaultValue={renderedValue}
+                           onChange={this.handleItemRowValueChange.bind(this, row.index)} />
+                </td>
+            </tr>
+        );
+    },
+
+    renderCreateBudgetTable() {
+        let itemRows = [];
+        if (this.state.event.itemRows !== undefined) {
+            itemRows = this.state.event.itemRows.map(this.renderCreateBudgetRow);
+        }
+        // Append on the default row
+        itemRows.push(this.renderCreateBudgetRow({
+            index: this.computeNextBudgetRowIndex(),
+            description: '',
+            value: "000"
+        }));
+
+        // TODO display a sum, tax + tip (customizable?)
+        return (
+            <table className="budget-items">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {itemRows}
+                </tbody>
+            </table>
+        )
+    },
+
+    renderCreateBudgetContent() {
+        return (
+            <div className="budget-content-editor">
+                <input type="text" placeholder="Title"
+                       value={this.state.event.title}
+                       onChange={this.handleTitleChange}/>
+                {this.renderCreateBudgetTable()}
+                {this.renderEditorSelector()}
+                {this.renderCreateEventButton()}
+            </div>
+        )
+    },
+
+    renderCreateTextContent() {
+        return (
+            <div className="text-content-editor">
+                <input type="text" placeholder="Title"
+                       value={this.state.event.title}
+                       onChange={this.handleTitleChange}/>
+                <TextArea placeholder="Description"
+                          value={this.state.event.description} rows={4}
+                          onChange={this.handleDescriptionChange} />
                 {this.renderEditorSelector()}
                 {this.renderCreateEventButton()}
             </div>
@@ -83,7 +198,9 @@ EditContent = React.createClass({
           // Render the buttons to select the different types of content
           return this.renderEditorSelector()
       } else if (this.state.contentType == this.contentTypes.text) {
-          return this.renderCreateGeneralContent()
+          return this.renderCreateTextContent()
+      } else if (this.state.contentType == this.contentTypes.budget) {
+          return this.renderCreateBudgetContent()
       }
     },
 

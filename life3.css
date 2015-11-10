@@ -55,12 +55,12 @@ div.page-container {
   background-color: rgb(250, 250, 250);
 }
 
-div.general-content-editor {
+div.text-content-editor {
   display: flex;
   flex-direction: column;
   margin-bottom: 1em;
 }
 
-div.general-content-editor input {
+div.text-content-editor input {
   margin-bottom: 1em;
 }
