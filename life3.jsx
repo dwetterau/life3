@@ -21,11 +21,6 @@ if (Meteor.isServer) {
             owner: this.userId
         })
     });
-    Meteor.publish("workouts", function() {
-        return Workouts.find({
-            owner: this.userId
-        })
-    });
 }
 
 Meteor.methods({

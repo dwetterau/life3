@@ -15,30 +15,35 @@ Event = React.createClass({
     },
 
     toggleEditMode() {
-        // TODO: On the save here, we should actually save the new state...
-
+        // The edit function should call this method when the event is saved
         this.setState({inEditMode: !this.state.inEditMode});
     },
 
     renderOptions() {
-        const editText = (this.state.inEditMode) ? "Save" : "Edit";
         return <div className="event-option-edit"
-                    onClick={this.toggleEditMode}>{editText}</div>
+                    onClick={this.toggleEditMode}>Edit</div>
     },
 
     renderEvent() {
         if (!this.state.inEditMode) {
             // TODO: Render events based on type.
             return (
-                <div className="event-body">
-                    <ReactMarkdown
-                        className="event-description"
-                        source={this.getMarkdownContent()} />
+                <div className="rendered-event-container">
+                    <div className="event-header">
+                        <div className="event-options">
+                            {this.renderOptions()}
+                        </div>
+                    </div>
+                    <div className="event-body">
+                        <ReactMarkdown
+                            className="event-description"
+                            source={this.getMarkdownContent()} />
+                    </div>
                 </div>
             )
         } else {
             return (
-                <EditContent event={this.props.event} />
+                <EditContent event={this.props.event} toggleEditMode={this.toggleEditMode} />
             )
         }
     },
@@ -46,11 +51,6 @@ Event = React.createClass({
     render() {
         return (
             <div className="event-container card">
-                <div className="event-header">
-                    <div className="event-options">
-                        {this.renderOptions()}
-                    </div>
-                </div>
                 {this.renderEvent()}
             </div>
         );

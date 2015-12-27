@@ -1,6 +1,10 @@
 EditContent = React.createClass({
     propTypes: {
-        event: React.PropTypes.object.isRequired
+        // The current properties of the event
+        event: React.PropTypes.object.isRequired,
+
+        // An optional function to trigger state updates after the save.
+        toggleEditMode: React.PropTypes.func
     },
 
     contentTypes: {
@@ -11,7 +15,8 @@ EditContent = React.createClass({
     getInitialState() {
         return {
             contentType: this.props.event.type,
-            event: this.props.event
+            event: this.props.event,
+            creating: !this.props.event._id
         }
     },
 
@@ -60,6 +65,9 @@ EditContent = React.createClass({
     },
 
     createEvent() {
+        if (!this.state.creating) {
+            throw Error("Tried to create event in non-create mode.");
+        }
         let content = {};
         if (this.state.contentType == this.contentTypes.text) {
             content = {
@@ -82,6 +90,21 @@ EditContent = React.createClass({
         this.setState({event: {type: this.state.contentType}})
     },
 
+    updateEvent() {
+        let newState = {};
+        // Clear off the _id value
+        Object.keys(this.state.event).forEach(function(key) {
+            if (key == "_id") {
+                return;
+            }
+            newState[key] = this.state.event[key];
+        }.bind(this));
+        Events.update(this.state.event._id, {
+            $set: newState
+        });
+        this.props.toggleEditMode();
+    },
+
     selectContentType(contentType) {
         this.setState({contentType: contentType});
     },
@@ -92,6 +115,13 @@ EditContent = React.createClass({
         } else {
             return this.state.event.itemRows.length;
         }
+    },
+
+    renderOptions() {
+        var onClick = (this.state.creating) ? this.createEvent : this.updateEvent;
+        var saveOrEdit = (this.state.creating) ? "Create" : "Save";
+        return <div className="event-option-edit"
+                    onClick={onClick}>{saveOrEdit}</div>
     },
 
     renderCreateBudgetRow(row) {
@@ -163,15 +193,6 @@ EditContent = React.createClass({
                           value={this.state.event.description} rows={4}
                           onChange={this.handleDescriptionChange} />
                 {this.renderEditorSelector()}
-                {this.renderCreateEventButton()}
-            </div>
-        )
-    },
-
-    renderCreateEventButton() {
-        return (
-            <div className="add-event-button" onClick={this.createEvent}>
-                Click to add your new event!
             </div>
         )
     },
@@ -207,6 +228,9 @@ EditContent = React.createClass({
     render() {
         return (
             <div className="create-event-container">
+                <div className="event-options">
+                    {this.renderOptions()}
+                </div>
                 {this.renderEditor()}
             </div>
         );
