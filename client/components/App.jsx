@@ -12,6 +12,7 @@ App = React.createClass({
 
     getEmptyEvent() {
         return {
+            startTime: new Date(),
             description: "",
             title: "",
             type: contentTypes.text

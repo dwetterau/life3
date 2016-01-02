@@ -85,3 +85,15 @@ div.budget-value {
 div.budget-value.-negative {
   color: #e74c3c;
 }
+
+div.date-picker {
+  margin-bottom: 1em;
+}
+
+div.date-picker select:first-child {
+  margin-right: .5em;
+}
+
+div.date-picker .day-suffix-text {
+  margin-right: .5em;
+}

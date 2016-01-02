@@ -69,6 +69,11 @@ EditContent = React.createClass({
         this.setState({event: this.state.event})
     },
 
+    handleDateChange(newDate) {
+        this.state.event.startTime = newDate;
+        this.setState({event: this.state.event});
+    },
+
     createEvent() {
         if (!this.state.creating) {
             throw Error("Tried to create event in non-create mode.");
@@ -85,8 +90,7 @@ EditContent = React.createClass({
                 itemRows: this.state.event.itemRows
             }
         }
-        // TODO: allow this to be better specified
-        content.startTime = new Date();
+        content.startTime = this.state.event.startTime;
         content.type = this.state.contentType;
         Meteor.call("addEvent", content);
 
@@ -145,7 +149,7 @@ EditContent = React.createClass({
                            onChange={this.handleItemRowValueChange.bind(this, row.index)} />
                 </td>
                 <td>
-                    <input type="checkbox" checked={row.isExpense}
+                    <input type="checkbox" defaultChecked={row.isExpense}
                            onChange={this.handleItemRowExpenseTypeChange.bind(this, row.index)} />
                 </td>
             </tr>
@@ -197,6 +201,7 @@ EditContent = React.createClass({
     renderCreateTextContent() {
         return (
             <div className="text-content-editor">
+                {this.renderDatePicker()}
                 <input type="text" placeholder="Title"
                        value={this.state.event.title}
                        onChange={this.handleTitleChange}/>
@@ -206,6 +211,11 @@ EditContent = React.createClass({
                 {this.renderEditorSelector()}
             </div>
         )
+    },
+
+    renderDatePicker() {
+        return <DatePicker callback={this.handleDateChange}
+                           date={this.state.event.startTime} />
     },
 
     renderEditorSelectorTile(type) {
