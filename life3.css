@@ -48,11 +48,11 @@ div.page-container {
 }
 
 .editor-selector-container :hover {
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(238, 238, 238);
 }
 
 .editor-selector-tile.-selected {
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(238, 238, 238);
 }
 
 div.text-content-editor {
@@ -63,4 +63,25 @@ div.text-content-editor {
 
 div.text-content-editor input {
   margin-bottom: 1em;
+}
+
+div.event-budget-item-rows {
+  border-bottom: 1px solid rgba(0, 0, 0, .16);
+}
+
+div.event-budget-item-rows .budget-item-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+div.event-budget-total {
+  text-align: right;
+}
+
+div.budget-value {
+  color: #2ecc71;
+}
+
+div.budget-value.-negative {
+  color: #e74c3c;
 }

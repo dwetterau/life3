@@ -7,7 +7,7 @@ EditContent = React.createClass({
         toggleEditMode: React.PropTypes.func,
 
         // The function to call to delete the event
-        deleteFunc: React.PropTypes.func,
+        deleteFunc: React.PropTypes.func
     },
 
     getInitialState() {
@@ -29,7 +29,8 @@ EditContent = React.createClass({
             this.state.event.itemRows[rowIndex] = {
                 index: rowIndex,
                 description: "",
-                value: "000"
+                value: "000",
+                isExpense: true
             };
         }
         return this.state.event.itemRows[rowIndex];
@@ -60,6 +61,12 @@ EditContent = React.createClass({
         }
         row.value = Math.round(floatValue * 100);
         this.setState({event: this.state.event});
+    },
+
+    handleItemRowExpenseTypeChange(rowIndex, e) {
+        let row = this.initializeAndGetItemRow(rowIndex);
+        row.isExpense = e.target.checked;
+        this.setState({event: this.state.event})
     },
 
     createEvent() {
@@ -116,10 +123,11 @@ EditContent = React.createClass({
 
     renderOptions() {
         const saveOrEdit = (this.state.creating) ? this.createEvent : this.updateEvent;
+        const deleteFunc = (this.state.creating) ? () => {} : this.props.deleteFunc;
         return <EventOptions creating={this.state.creating}
                              editing={true}
                              saveOrEditFunc={saveOrEdit}
-                             deleteFunc={() => {}} />
+                             deleteFunc={deleteFunc} />
     },
 
     renderCreateBudgetRow(row) {
@@ -136,6 +144,10 @@ EditContent = React.createClass({
                     <input type="text" defaultValue={renderedValue}
                            onChange={this.handleItemRowValueChange.bind(this, row.index)} />
                 </td>
+                <td>
+                    <input type="checkbox" checked={row.isExpense}
+                           onChange={this.handleItemRowExpenseTypeChange.bind(this, row.index)} />
+                </td>
             </tr>
         );
     },
@@ -149,7 +161,8 @@ EditContent = React.createClass({
         itemRows.push(this.renderCreateBudgetRow({
             index: this.computeNextBudgetRowIndex(),
             description: '',
-            value: "000"
+            value: "000",
+            isExpense: true
         }));
 
         // TODO display a sum, tax + tip (customizable?)
@@ -159,6 +172,7 @@ EditContent = React.createClass({
                     <tr>
                         <th>Item</th>
                         <th>$</th>
+                        <th>Expense?</th>
                     </tr>
                 </thead>
                 <tbody>
