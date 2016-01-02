@@ -14,7 +14,7 @@ App = React.createClass({
         return {
             description: "",
             title: "",
-            type: "text"
+            type: contentTypes.text
         };
     },
 

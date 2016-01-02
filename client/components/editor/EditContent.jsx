@@ -4,12 +4,10 @@ EditContent = React.createClass({
         event: React.PropTypes.object.isRequired,
 
         // An optional function to trigger state updates after the save.
-        toggleEditMode: React.PropTypes.func
-    },
+        toggleEditMode: React.PropTypes.func,
 
-    contentTypes: {
-        text: "text",
-        budget: "budget"
+        // The function to call to delete the event
+        deleteFunc: React.PropTypes.func,
     },
 
     getInitialState() {
@@ -69,12 +67,12 @@ EditContent = React.createClass({
             throw Error("Tried to create event in non-create mode.");
         }
         let content = {};
-        if (this.state.contentType == this.contentTypes.text) {
+        if (this.state.contentType == contentTypes.text) {
             content = {
                 title: this.state.event.title,
                 description: this.state.event.description
             };
-        } else if (this.state.contentType = this.contentTypes.budget) {
+        } else if (this.state.contentType = contentTypes.budget) {
             content = {
                 title: this.state.event.title,
                 itemRows: this.state.event.itemRows
@@ -83,7 +81,6 @@ EditContent = React.createClass({
         // TODO: allow this to be better specified
         content.startTime = new Date();
         content.type = this.state.contentType;
-        // TODO: check a prop value of the event id, if present, update instead
         Meteor.call("addEvent", content);
 
         // Reset the editor to a blank event of the same type
@@ -118,10 +115,11 @@ EditContent = React.createClass({
     },
 
     renderOptions() {
-        var onClick = (this.state.creating) ? this.createEvent : this.updateEvent;
-        var saveOrEdit = (this.state.creating) ? "Create" : "Save";
-        return <div className="event-option-edit"
-                    onClick={onClick}>{saveOrEdit}</div>
+        const saveOrEdit = (this.state.creating) ? this.createEvent : this.updateEvent;
+        return <EventOptions creating={this.state.creating}
+                             editing={true}
+                             saveOrEditFunc={saveOrEdit}
+                             deleteFunc={() => {}} />
     },
 
     renderCreateBudgetRow(row) {
@@ -178,7 +176,6 @@ EditContent = React.createClass({
                        onChange={this.handleTitleChange}/>
                 {this.renderCreateBudgetTable()}
                 {this.renderEditorSelector()}
-                {this.renderCreateEventButton()}
             </div>
         )
     },
@@ -190,7 +187,7 @@ EditContent = React.createClass({
                        value={this.state.event.title}
                        onChange={this.handleTitleChange}/>
                 <TextArea placeholder="Description"
-                          value={this.state.event.description} rows={4}
+                          value={this.state.event.description || ""} rows={4}
                           onChange={this.handleDescriptionChange} />
                 {this.renderEditorSelector()}
             </div>
@@ -207,30 +204,30 @@ EditContent = React.createClass({
     },
 
     renderEditorSelector() {
+        // If we are not creating, we can't change the type
+        if (!this.state.creating) return;
         return (
             <div className="editor-selector-container">
-                {Object.keys(this.contentTypes).map(this.renderEditorSelectorTile)}
+                {Object.keys(contentTypes).map(this.renderEditorSelectorTile)}
             </div>
         )
     },
 
     renderEditor() {
-      if (!this.state.contentType) {
-          // Render the buttons to select the different types of content
-          return this.renderEditorSelector()
-      } else if (this.state.contentType == this.contentTypes.text) {
-          return this.renderCreateTextContent()
-      } else if (this.state.contentType == this.contentTypes.budget) {
-          return this.renderCreateBudgetContent()
-      }
+        if (!this.state.contentType) {
+            // Render the buttons to select the different types of content
+            return this.renderEditorSelector()
+        } else if (this.state.contentType == contentTypes.text) {
+            return this.renderCreateTextContent()
+        } else if (this.state.contentType == contentTypes.budget) {
+            return this.renderCreateBudgetContent()
+        }
     },
 
     render() {
         return (
             <div className="create-event-container">
-                <div className="event-options">
-                    {this.renderOptions()}
-                </div>
+                {this.renderOptions()}
                 {this.renderEditor()}
             </div>
         );
