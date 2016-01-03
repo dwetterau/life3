@@ -58,11 +58,14 @@ div.page-container {
 div.text-content-editor {
   display: flex;
   flex-direction: column;
+}
+
+div.event-title-editor input {
   margin-bottom: 1em;
 }
 
-div.text-content-editor input {
-  margin-bottom: 1em;
+div.editor-selector-container {
+  margin-top: 1em;
 }
 
 div.event-budget-item-rows {

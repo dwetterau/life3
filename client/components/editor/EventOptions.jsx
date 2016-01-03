@@ -14,7 +14,8 @@ EventOptions = React.createClass({
     },
 
     renderEventOptionEdit() {
-        const saveOrEdit = (this.props.creating) ? "Create" : (this.props.editing) ? "Save" : "Edit";
+        const saveOrEdit = (this.props.creating) ? "Create" : (
+            (this.props.editing) ? "Save" : "Edit");
         return <div className="event-option-edit"
                     onClick={this.props.saveOrEditFunc}>{saveOrEdit}</div>
     },

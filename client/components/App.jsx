@@ -10,13 +10,8 @@ App = React.createClass({
         }
     },
 
-    getEmptyEvent() {
-        return {
-            startTime: new Date(),
-            description: "",
-            title: "",
-            type: contentTypes.text
-        };
+    createEventFunc(event) {
+        return Meteor.call("addEvent", event)
     },
 
     renderEvents() {
@@ -35,7 +30,8 @@ App = React.createClass({
         return (
             <div className="page-content">
                 <div className="header-container card">
-                    <EditContent event={this.getEmptyEvent()} />
+                    <EditEvent event={getEmptyEvent()}
+                               createFunc={this.createEventFunc} />
                 </div>
                 <div className="timeline-container">
                     {this.renderEvents()}
@@ -51,7 +47,7 @@ App = React.createClass({
                     <div className="account-ui-wrapper">
                         <AccountsUIWrapper />
                     </div>
-                    <h1 className="page-title">Fill</h1>
+                    <h1 className="page-title">L3</h1>
                 </header>
 
                 {this.data.currentUser ? this.renderPage() : ''}

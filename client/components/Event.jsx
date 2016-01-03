@@ -15,8 +15,14 @@ Event = React.createClass({
     },
 
     toggleEditMode() {
-        // The edit function should call this method when the event is saved
         this.setState({inEditMode: !this.state.inEditMode});
+    },
+
+    updateEvent(eventId, newEvent) {
+        Events.update(eventId, {
+            $set: newEvent
+        });
+        this.toggleEditMode();
     },
 
     deleteEvent() {
@@ -30,11 +36,10 @@ Event = React.createClass({
                              deleteFunc={this.deleteEvent} />
     },
 
-    renderTextEvent() {
-        const source = this.props.event.description || "";
+    renderTextContent(content, index) {
+        const source = content.description || "";
         return (
-            <div className="event-body">
-                <h1 className="event-title">{this.props.event.title}</h1>
+            <div className="event-content" key={index}>
                 <ReactMarkdown
                     className="event-description"
                     source={source} />
@@ -80,8 +85,8 @@ Event = React.createClass({
         )
     },
 
-    renderBudgetEventItemRows() {
-        const itemRows = this.props.event.itemRows || [];
+    renderBudgetContentItemRows(content) {
+        const itemRows = content.itemRows || [];
         return (
             <div className="event-budget-item-rows">
                 {itemRows.map(this.renderBudgetItemRow)}
@@ -89,8 +94,8 @@ Event = React.createClass({
         )
     },
 
-    renderBudgetEventTotal() {
-        const itemRows = this.props.event.itemRows || [];
+    renderBudgetContentTotal(content) {
+        const itemRows = content.itemRows || [];
 
         // Sum up all of the itemRows
         let sum = 0;
@@ -104,22 +109,39 @@ Event = React.createClass({
         )
     },
 
-    renderBudgetEvent() {
+    renderBudgetContent(content, index) {
         return (
-            <div className="event-body">
-                <h1 className="event-title">{this.props.event.title}</h1>
-                {this.renderBudgetEventItemRows()}
-                {this.renderBudgetEventTotal()}
+            <div className="event-content" key={index}>
+                {this.renderBudgetContentItemRows(content)}
+                {this.renderBudgetContentTotal(content)}
+            </div>
+        )
+    },
+
+    renderContent(content, index) {
+        if (content.type == contentTypes.text) {
+            return this.renderTextContent(content, index);
+        } else if (content.type == contentTypes.budget) {
+            return this.renderBudgetContent(content, index);
+        }
+    },
+
+    renderEventContents() {
+        const eventContents = this.props.event.contents || [];
+        return (
+            <div className="event-contents">
+                {eventContents.map(this.renderContent)}
             </div>
         )
     },
 
     renderEventBody() {
-        if (this.props.event.type == contentTypes.text) {
-            return this.renderTextEvent();
-        } else if (this.props.event.type == contentTypes.budget) {
-            return this.renderBudgetEvent();
-        }
+        return (
+            <div className="event-body">
+                <h1 className="event-title">{this.props.event.title}</h1>
+                {this.renderEventContents()}
+            </div>
+        )
     },
 
     renderEvent() {
@@ -132,9 +154,9 @@ Event = React.createClass({
             )
         } else {
             return (
-                <EditContent event={this.props.event}
-                             toggleEditMode={this.toggleEditMode}
-                             deleteFunc={this.deleteEvent} />
+                <EditEvent event={this.props.event}
+                           updateFunc={this.updateEvent}
+                           deleteFunc={this.deleteEvent} />
             )
         }
     },
