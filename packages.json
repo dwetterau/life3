@@ -1,5 +1,6 @@
 {
   "moment": "2.10.6",
+  "node-uuid": "1.4.7",
   "react-markdown": "1.0.5",
   "react-textarea-autosize": "3.1.0"
 }

@@ -2,7 +2,7 @@ getEmptyEvent = () => {
     return {
         startTime: new Date(),
         title: "",
-        contents: [{}]
+        contents: []
     };
 };
 
@@ -40,6 +40,19 @@ EditEvent = React.createClass({
 
     handleContentChange(index, newContent) {
         this.state.event.contents[index] = newContent;
+        this.setState({event: this.state.event});
+    },
+
+    handleDeleteContent(index) {
+        this.state.event.contents.splice(index, 1);
+        this.setState({event: this.state.event});
+    },
+
+    selectNewContentType(contentType) {
+        this.state.event.contents.push({
+            _id: uuid.v4(),
+            type: contentType
+        });
         this.setState({event: this.state.event});
     },
 
@@ -101,15 +114,39 @@ EditEvent = React.createClass({
             <div className="event-content-editors-container">
                 {this.state.event.contents.map(function(content, index) {
                     return <EditContent
-                        key={index}
+                        key={content._id}
                         content={content}
                         updateContent={
-                            this.handleContentChange.bind(this, index)}
+                            this.handleContentChange.bind(this, index)
+                        }
+                        deleteContent={
+                            this.handleDeleteContent.bind(this, index)
+                        }
                     />
                 }.bind(this))}
             </div>
         )
     },
+
+    renderEditorContentSelectorTile(type) {
+        const className = "editor-selector-tile -" + type;
+        return (
+            <div key={type} className={className}
+                 onClick={this.selectNewContentType.bind(this, type)}>
+                {type[0].toUpperCase() + type.substr(1)}
+            </div>
+        )
+    },
+
+    renderEditorContentSelector() {
+        return (
+            <div className="editor-selector-container">
+                {Object.keys(contentTypes).map(
+                    this.renderEditorContentSelectorTile)}
+            </div>
+        )
+    },
+
 
     render() {
         return (
@@ -118,6 +155,7 @@ EditEvent = React.createClass({
                 {this.renderDatePicker()}
                 {this.renderTitleEditor()}
                 {this.renderContentEditors()}
+                {this.renderEditorContentSelector()}
             </div>
         )
     }

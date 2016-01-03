@@ -51,21 +51,29 @@ div.page-container {
   background-color: rgb(238, 238, 238);
 }
 
-.editor-selector-tile.-selected {
-  background-color: rgb(238, 238, 238);
-}
-
 div.text-content-editor {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1em;
+}
+
+div.budget-content-editor {
+  margin-bottom: 1em;
+}
+
+div.budget-content-editor table {
+  border: none;
+  border-collapse: collapse;
+  padding: 0;
+  margin: 0;
+}
+
+div.budget-content-editor table td {
+  padding: 0;
 }
 
 div.event-title-editor input {
   margin-bottom: 1em;
-}
-
-div.editor-selector-container {
-  margin-top: 1em;
 }
 
 div.event-budget-item-rows {

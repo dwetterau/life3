@@ -4,13 +4,10 @@ EditContent = React.createClass({
         content: React.PropTypes.object.isRequired,
 
         // The function to call when the content changes
-        updateContent: React.PropTypes.func.isRequired
-    },
+        updateContent: React.PropTypes.func.isRequired,
 
-    getInitialState() {
-        return {
-            content: this.props.content
-        }
+        // The function to call when the content is completely deleted
+        deleteContent: React.PropTypes.func.isRequired
     },
 
     initializeAndGetItemRow(rowIndex) {
@@ -46,6 +43,7 @@ EditContent = React.createClass({
                 itemRows: newContent.itemRows
             }
         }
+        content._id = newContent._id;
         content.type = newContent.type;
         this.props.updateContent(content);
     },
@@ -75,11 +73,6 @@ EditContent = React.createClass({
     handleItemRowExpenseTypeChange(rowIndex, e) {
         let row = this.initializeAndGetItemRow(rowIndex);
         row.isExpense = e.target.checked;
-        this.handleContentUpdate(this.props.content);
-    },
-
-    selectContentType(contentType) {
-        this.props.content.type = contentType;
         this.handleContentUpdate(this.props.content);
     },
 
@@ -149,7 +142,6 @@ EditContent = React.createClass({
         return (
             <div className="budget-content-editor">
                 {this.renderCreateBudgetTable()}
-                {this.renderEditorContentSelector()}
             </div>
         )
     },
@@ -160,45 +152,34 @@ EditContent = React.createClass({
                 <TextArea placeholder="Description"
                           value={this.props.content.description || ""} rows={4}
                           onChange={this.handleDescriptionChange} />
-                {this.renderEditorContentSelector()}
-            </div>
-        )
-    },
-
-    renderEditorContentSelectorTile(type) {
-        const className = "editor-selector-tile -" + type + (
-                (type == this.props.content.type ? " -selected" : ""));
-        return (
-            <div key={type} className={className}
-                 onClick={this.selectContentType.bind(this, type)}>
-                {type[0].toUpperCase() + type.substr(1)}
-            </div>
-        )
-    },
-
-    renderEditorContentSelector() {
-        return (
-            <div className="editor-selector-container">
-                {Object.keys(contentTypes).map(
-                    this.renderEditorContentSelectorTile)}
             </div>
         )
     },
 
     renderEditor() {
-        if (!this.props.content || !this.props.content.type) {
-            // Render the buttons to select the different types of content
-            return this.renderEditorContentSelector()
-        } else if (this.props.content.type == contentTypes.text) {
+        if (this.props.content.type == contentTypes.text) {
             return this.renderCreateTextContent()
         } else if (this.props.content.type == contentTypes.budget) {
             return this.renderCreateBudgetContent()
+        } else {
+            console.error("Unknown content type, cannot render editor",
+                this.props.content.type);
         }
+    },
+
+    renderOptions() {
+        return (
+            <div className="content-options-menu"
+                 onClick={this.props.deleteContent}>
+                x
+            </div>
+        )
     },
 
     render() {
         return (
             <div className="create-content-container">
+                {this.renderOptions()}
                 {this.renderEditor()}
             </div>
         );
