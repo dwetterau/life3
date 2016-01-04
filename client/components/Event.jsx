@@ -19,14 +19,12 @@ Event = React.createClass({
     },
 
     updateEvent(eventId, newEvent) {
-        Events.update(eventId, {
-            $set: newEvent
-        });
+        Meteor.call("updateEvent", eventId, newEvent);
         this.toggleEditMode();
     },
 
     deleteEvent() {
-        Events.remove(this.props.event._id)
+        Meteor.call("deleteEvent", this.props.event._id);
     },
 
     renderOptions() {
@@ -136,9 +134,13 @@ Event = React.createClass({
     },
 
     renderEventBody() {
+        const formattedDate = moment(this.props.event.startTime).format("ll");
         return (
             <div className="event-body">
-                <h1 className="event-title">{this.props.event.title}</h1>
+                <div className="event-header">
+                    <div className="event-title">{this.props.event.title}</div>
+                    <div className="event-date">{formattedDate}</div>
+                </div>
                 {this.renderEventContents()}
             </div>
         )

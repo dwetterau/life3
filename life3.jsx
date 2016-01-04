@@ -31,5 +31,39 @@ Meteor.methods({
         }
         content.owner = Meteor.userId();
         return Events.insert(content);
+    },
+
+    updateEvent(eventId, event) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-authorized");
+        }
+
+        // Make sure that the owner matches for the event being updated
+        const owner = Meteor.userId();
+        if (owner != event.owner) {
+            throw new Meteor.Error("not-authorized");
+        }
+        const currentEvent = Events.findOne({_id: eventId});
+        if (owner != currentEvent.owner) {
+            throw new Meteor.Error("not-authorized");
+        }
+
+        Events.update(eventId, {
+            $set: event
+        });
+    },
+
+    deleteEvent(eventId) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error("not-authorized");
+        }
+
+        // Make sure that the owner matches for the event being updated
+        const owner = Meteor.userId();
+        const currentEvent = Events.findOne({_id: eventId});
+        if (owner != currentEvent.owner) {
+            throw new Meteor.Error("not-authorized");
+        }
+        Events.remove(eventId)
     }
 });

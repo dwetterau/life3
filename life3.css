@@ -76,6 +76,22 @@ div.event-title-editor input {
   margin-bottom: 1em;
 }
 
+div.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+div.event-header div.event-title {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+div.event-header div.event-date {
+  font-size: 1em;
+  font-style: italic;
+}
+
 div.event-budget-item-rows {
   border-bottom: 1px solid rgba(0, 0, 0, .16);
 }
