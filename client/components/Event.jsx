@@ -77,7 +77,14 @@ Event = React.createClass({
     renderBudgetItemRow(itemRow) {
         return (
             <div key={itemRow.index} className="budget-item-row">
-                <div className="budget-item-row-description">{itemRow.description}</div>
+                <div className="budget-item-row-header">
+                    <div className="budget-item-row-source">
+                        {itemRow.source}
+                    </div>
+                    <div className="budget-item-row-description">
+                        {itemRow.description}
+                    </div>
+                </div>
                 {this.renderBudgetValue(itemRow.value, itemRow.isExpense)}
             </div>
         )

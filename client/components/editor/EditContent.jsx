@@ -21,6 +21,7 @@ EditContent = React.createClass({
             }
             this.props.content.itemRows[rowIndex] = {
                 index: rowIndex,
+                source: "",
                 description: "",
                 value: "000",
                 isExpense: true
@@ -50,6 +51,12 @@ EditContent = React.createClass({
 
     handleDescriptionChange(e) {
         this.props.content.description = e.target.value;
+        this.handleContentUpdate(this.props.content);
+    },
+
+    handleItemRowSourceChange(rowIndex, e) {
+        let row = this.initializeAndGetItemRow(rowIndex);
+        row.source = e.target.value;
         this.handleContentUpdate(this.props.content);
     },
 
@@ -91,17 +98,26 @@ EditContent = React.createClass({
         return (
             <tr key={row.index}>
                 <td>
+                    <input type="text" placeholder="Source"
+                           defaultValue={row.source}
+                           onChange={this.handleItemRowSourceChange.bind(
+                                this, row.index)} />
+                </td>
+                <td>
                     <input type="text" placeholder="Description"
                            defaultValue={row.description}
-                           onChange={this.handleItemRowDescriptionChange.bind(this, row.index)} />
+                           onChange={this.handleItemRowDescriptionChange.bind(
+                                this, row.index)} />
                 </td>
                 <td>
                     <input type="text" defaultValue={renderedValue}
-                           onChange={this.handleItemRowValueChange.bind(this, row.index)} />
+                           onChange={this.handleItemRowValueChange.bind(
+                                this, row.index)} />
                 </td>
                 <td>
                     <input type="checkbox" defaultChecked={row.isExpense}
-                           onChange={this.handleItemRowExpenseTypeChange.bind(this, row.index)} />
+                           onChange={this.handleItemRowExpenseTypeChange.bind(
+                                this, row.index)} />
                 </td>
             </tr>
         );
@@ -126,6 +142,7 @@ EditContent = React.createClass({
             <table className="budget-items">
                 <thead>
                     <tr>
+                        <th>Source</th>
                         <th>Item</th>
                         <th>$</th>
                         <th>Expense?</th>

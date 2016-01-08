@@ -118,6 +118,22 @@ div.event-budget-item-rows .budget-item-row {
   justify-content: space-between;
 }
 
+div.budget-item-row-header {
+  display: flex;
+}
+
+div.budget-item-row-header div.budget-item-row-source {
+  font-weight: bold;
+  width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+div.budget-item-row-header div.budget-item-row-description {
+  padding-left: 1em;
+}
+
 div.event-budget-total {
   text-align: right;
 }
