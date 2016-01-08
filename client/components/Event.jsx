@@ -47,7 +47,7 @@ Event = React.createClass({
 
     renderBudgetValue(value, isExpense) {
         // Convert the number to a string
-        let fractional = value % 100;
+        let fractional = Math.abs(value % 100);
 
         // Pad with a 0 if needed
         if (fractional < 10) {
