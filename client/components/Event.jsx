@@ -53,17 +53,19 @@ Event = React.createClass({
         if (fractional < 10) {
             fractional = `0${fractional}`;
         }
-        let integer = Math.floor(value / 100);
-
         let className = "budget-value";
         if (isExpense) {
             // Flip the sign of an expense, we expect it to be negative
-            integer *= -1;
+            value *= -1;
             className += " -expense"
         }
-        let representation = `\$${integer}.${fractional}`;
-        if (integer < 0) {
+        let representation = "";
+        if (value >= 0) {
+            let integer = Math.floor(value / 100);
+            representation = `\$${integer}.${fractional}`;
+        } else  {
             className += " -negative";
+            let integer = Math.ceil(value / 100);
             representation = `-\$${-1 * integer}.${fractional}`;
         }
 
@@ -145,8 +147,8 @@ Event = React.createClass({
         return (
             <div className="event-body">
                 <div className="event-header">
-                    <div className="event-title">{this.props.event.title}</div>
                     <div className="event-date">{formattedDate}</div>
+                    <div className="event-title">{this.props.event.title}</div>
                 </div>
                 {this.renderEventContents()}
             </div>
