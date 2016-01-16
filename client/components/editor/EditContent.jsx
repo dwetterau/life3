@@ -10,8 +10,6 @@ EditContent = React.createClass({
         deleteContent: React.PropTypes.func.isRequired
     },
 
-
-
     renderEditor() {
         if (this.props.content.type == contentTypes.text) {
             return <EditTextContent
@@ -21,8 +19,12 @@ EditContent = React.createClass({
             return <EditBudgetContent
                 content={this.props.content}
                 updateContent={this.props.updateContent} />
+        } else if (this.props.content.type == contentTypes.checklist) {
+            return <EditChecklistContent
+                content={this.props.content}
+                updateContent={this.props.updateContent} />
         } else {
-            throw Error("Unknown content type, cannot render editor " +
+            console.error("Unknown content type, cannot render editor ",
                 this.props.content.type);
         }
     },

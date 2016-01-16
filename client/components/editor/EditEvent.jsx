@@ -53,6 +53,8 @@ EditEvent = React.createClass({
             this.state.event.contents.push(getEmptyTextContent());
         } else if (contentType == contentTypes.budget) {
             this.state.event.contents.push(getEmptyBudgetContent());
+        } else if (contentType == contentTypes.checklist) {
+            this.state.event.contents.push(getEmptyChecklistContent());
         }
         this.setState({event: this.state.event});
     },
