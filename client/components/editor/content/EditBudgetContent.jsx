@@ -48,7 +48,7 @@ EditBudgetContent = React.createClass({
         // fields for different types will be cleared out by this method.
         let itemRows = newContent.itemRows.map(function(itemRow) {
             return {
-                _id: itemRow._id || uuid.v4(), // For backwards compat.
+                _id: itemRow._id,
                 description: itemRow.description,
                 value: itemRow.value,
                 isExpense: itemRow.isExpense
