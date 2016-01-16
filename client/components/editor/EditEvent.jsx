@@ -49,10 +49,11 @@ EditEvent = React.createClass({
     },
 
     selectNewContentType(contentType) {
-        this.state.event.contents.push({
-            _id: uuid.v4(),
-            type: contentType
-        });
+        if (contentType == contentTypes.text) {
+            this.state.event.contents.push(getEmptyTextContent());
+        } else if (contentType == contentTypes.budget) {
+            this.state.event.contents.push(getEmptyBudgetContent());
+        }
         this.setState({event: this.state.event});
     },
 

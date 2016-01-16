@@ -1,3 +1,21 @@
+getEmptyBudgetContent = () => {
+    return {
+        _id: uuid.v4(),
+        type: contentTypes.budget,
+        payee: "",
+        itemRows: [getEmptyBudgetItemRow()]
+    };
+};
+
+getEmptyBudgetItemRow = () => {
+    return {
+        _id: uuid.v4(),
+        description: "",
+        value: "000",
+        isExpense: true
+    }
+};
+
 EditBudgetContent = React.createClass({
     propTypes: {
         // The current properties of the content
@@ -16,12 +34,7 @@ EditBudgetContent = React.createClass({
                 console.error("Adding a item row at a far away index", rowIndex,
                     this.props.content.itemRows);
             }
-            this.props.content.itemRows[rowIndex] = {
-                index: rowIndex,
-                description: "",
-                value: "000",
-                isExpense: true
-            };
+            this.props.content.itemRows[rowIndex] = getEmptyBudgetItemRow();
         }
         return this.props.content.itemRows[rowIndex];
     },
@@ -35,7 +48,7 @@ EditBudgetContent = React.createClass({
         // fields for different types will be cleared out by this method.
         let itemRows = newContent.itemRows.map(function(itemRow) {
             return {
-                index: itemRow.index,
+                _id: itemRow._id || uuid.v4(), // For backwards compat.
                 description: itemRow.description,
                 value: itemRow.value,
                 isExpense: itemRow.isExpense
@@ -77,35 +90,46 @@ EditBudgetContent = React.createClass({
         this.handleContentUpdate(this.props.content);
     },
 
-    computeNextBudgetRowIndex() {
-        if (!this.props.content.itemRows) {
-            return 0;
-        } else {
-            return this.props.content.itemRows.length;
-        }
+    handleDeleteItemRow(rowIndex) {
+        let itemRows = this.props.content.itemRows;
+        itemRows.splice(rowIndex, 1);
+        this.handleContentUpdate(this.props.content);
     },
 
-    renderCreateBudgetRow(row) {
+    handleAddItemRow() {
+        let itemRows = this.props.content.itemRows || [];
+        itemRows.push(getEmptyBudgetItemRow());
+        this.handleContentUpdate(this.props.content);
+    },
+
+    renderCreateBudgetRow(row, index) {
         const stringValue = row.value.toString();
         const renderedValue = stringValue.substr(0, stringValue.length - 2) +
             "." + stringValue.substr(stringValue.length - 2);
         return (
-            <tr key={row.index}>
+            <tr key={row._id}>
                 <td>
                     <input type="text" placeholder="Description"
                            defaultValue={row.description}
                            onChange={this.handleItemRowDescriptionChange.bind(
-                                this, row.index)} />
+                                this, index)} />
                 </td>
                 <td>
                     <input type="text" defaultValue={renderedValue}
                            onChange={this.handleItemRowValueChange.bind(
-                                this, row.index)} />
+                                this, index)} />
                 </td>
                 <td>
                     <input type="checkbox" defaultChecked={row.isExpense}
                            onChange={this.handleItemRowExpenseTypeChange.bind(
-                                this, row.index)} />
+                                this, index)} />
+                </td>
+                <td>
+                    <div className="item-row-delete-button"
+                         onClick={this.handleDeleteItemRow.bind(
+                            this, index)}>
+                        x
+                    </div>
                 </td>
             </tr>
         );
@@ -117,13 +141,6 @@ EditBudgetContent = React.createClass({
             itemRows = this.props.content.itemRows.map(
                 this.renderCreateBudgetRow);
         }
-        // Append on the default row
-        itemRows.push(this.renderCreateBudgetRow({
-            index: this.computeNextBudgetRowIndex(),
-            description: '',
-            value: "000",
-            isExpense: true
-        }));
 
         // TODO display a sum, tax + tip (customizable?)
         return (
@@ -142,6 +159,15 @@ EditBudgetContent = React.createClass({
         )
     },
 
+    renderAddItemRowButton() {
+        return (
+            <div className="budget-add-item-row"
+                 onClick={this.handleAddItemRow}>
+                Add row
+            </div>
+        )
+    },
+
     render() {
         return (
             <div className="budget-content-editor">
@@ -149,6 +175,7 @@ EditBudgetContent = React.createClass({
                        placeholder="Payee" value={this.props.content.payee}
                        onChange={this.handlePayeeChange} />
                 {this.renderCreateBudgetTable()}
+                {this.renderAddItemRowButton()}
             </div>
         )
     }

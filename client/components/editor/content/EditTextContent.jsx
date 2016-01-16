@@ -1,3 +1,11 @@
+getEmptyTextContent = () => {
+    return {
+        _id: uuid.v4(),
+        type: contentTypes.text,
+        description: ""
+    };
+};
+
 EditTextContent = React.createClass({
     propTypes: {
         // The current properties of the content
