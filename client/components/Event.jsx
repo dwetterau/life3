@@ -45,6 +45,12 @@ Event = React.createClass({
         )
     },
 
+    renderBudgetPayee(content) {
+        return (
+            <h3 className="budget-payee">{content.payee}</h3>
+        )
+    },
+
     renderBudgetValue(value, isExpense) {
         // Convert the number to a string
         let fractional = Math.abs(value % 100);
@@ -80,9 +86,6 @@ Event = React.createClass({
         return (
             <div key={itemRow.index} className="budget-item-row">
                 <div className="budget-item-row-header">
-                    <div className="budget-item-row-source">
-                        {itemRow.source}
-                    </div>
                     <div className="budget-item-row-description">
                         {itemRow.description}
                     </div>
@@ -119,6 +122,7 @@ Event = React.createClass({
     renderBudgetContent(content, index) {
         return (
             <div className="event-content" key={index}>
+                {this.renderBudgetPayee(content)}
                 {this.renderBudgetContentItemRows(content)}
                 {this.renderBudgetContentTotal(content)}
             </div>

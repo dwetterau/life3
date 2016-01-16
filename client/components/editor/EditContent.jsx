@@ -21,7 +21,6 @@ EditContent = React.createClass({
             }
             this.props.content.itemRows[rowIndex] = {
                 index: rowIndex,
-                source: "",
                 description: "",
                 value: "000",
                 isExpense: true
@@ -40,8 +39,17 @@ EditContent = React.createClass({
                 description: newContent.description
             };
         } else if (newContent.type == contentTypes.budget) {
+            let itemRows = newContent.itemRows.map(function(itemRow) {
+                return {
+                    index: itemRow.index,
+                    description: itemRow.description,
+                    value: itemRow.value,
+                    isExpense: itemRow.isExpense
+                }
+            });
             content = {
-                itemRows: newContent.itemRows
+                payee: newContent.payee,
+                itemRows: itemRows
             }
         }
         content._id = newContent._id;
@@ -54,9 +62,8 @@ EditContent = React.createClass({
         this.handleContentUpdate(this.props.content);
     },
 
-    handleItemRowSourceChange(rowIndex, e) {
-        let row = this.initializeAndGetItemRow(rowIndex);
-        row.source = e.target.value;
+    handlePayeeChange(e) {
+        this.props.content.payee = e.target.value;
         this.handleContentUpdate(this.props.content);
     },
 
@@ -98,12 +105,6 @@ EditContent = React.createClass({
         return (
             <tr key={row.index}>
                 <td>
-                    <input type="text" placeholder="Source"
-                           defaultValue={row.source}
-                           onChange={this.handleItemRowSourceChange.bind(
-                                this, row.index)} />
-                </td>
-                <td>
                     <input type="text" placeholder="Description"
                            defaultValue={row.description}
                            onChange={this.handleItemRowDescriptionChange.bind(
@@ -142,7 +143,6 @@ EditContent = React.createClass({
             <table className="budget-items">
                 <thead>
                     <tr>
-                        <th>Source</th>
                         <th>Item</th>
                         <th>$</th>
                         <th>Expense?</th>
@@ -158,6 +158,9 @@ EditContent = React.createClass({
     renderCreateBudgetContent() {
         return (
             <div className="budget-content-editor">
+                <input className="budget-payee-editor" type="text"
+                       placeholder="Payee" value={this.props.content.payee}
+                       onChange={this.handlePayeeChange} />
                 {this.renderCreateBudgetTable()}
             </div>
         )
