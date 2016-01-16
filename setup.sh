@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 rm -rf .meteor/ packages/
 meteor create . &&\
 meteor remove autopublish && \
