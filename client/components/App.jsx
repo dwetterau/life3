@@ -15,14 +15,21 @@ App = React.createClass({
     },
 
     renderEvents() {
-        let rendered_events = [];
-        this.data.events.map((event) => {
-            rendered_events.push(<Event key={event._id} event={event} />);
+        let allEvents = this.data.events.map(function(event) {
+            return event;
+        });
+        allEvents.sort(function(event1, event2) {
+            return moment(event1.startTime).unix() - (
+                    moment(event2.startTime).unix());
+        });
+        let renderedEvents = [];
+        allEvents.map((event) => {
+            renderedEvents.push(<Event key={event._id} event={event} />);
         });
 
         // We reverse here for rendering purposes. This might change.
-        rendered_events.reverse();
-        return rendered_events;
+        renderedEvents.reverse();
+        return renderedEvents;
     },
 
     renderPage() {
