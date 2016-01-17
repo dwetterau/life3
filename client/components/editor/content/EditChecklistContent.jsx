@@ -84,26 +84,25 @@ EditChecklistContent = React.createClass({
 
     renderCreateChecklistRow(row, index) {
         return (
-            <tr className="checklist-row" key={row._id}>
-                <td>
+            <div className="checklist-row" key={row._id}>
+                <div className="checklist-checkbox-container">
                     <input type="checkbox" defaultChecked={row.done}
                            onChange={this.handleItemRowDoneChange.bind(
                                 this, index)} />
-                </td>
-                <td>
-                    <input type="text" placeholder="Description"
-                           defaultValue={row.description}
-                           onChange={this.handleItemRowDescriptionChange.bind(
-                                this, index)} />
-                </td>
-                <td>
-                    <div className="item-row-delete-button"
-                         onClick={this.handleDeleteItemRow.bind(
-                            this, index)}>
-                        x
-                    </div>
-                </td>
-            </tr>
+                </div>
+                <div className="checklist-description-container">
+                    <TextArea
+                        placeholder="Description"
+                        value={row.description || ""} rows={1}
+                        onChange={this.handleItemRowDescriptionChange.bind(
+                            this, index)} />
+                </div>
+                <div className="checklist-item-row-delete-button"
+                     onClick={this.handleDeleteItemRow.bind(
+                        this, index)}>
+                    x
+                </div>
+            </div>
         );
     },
 
@@ -114,11 +113,9 @@ EditChecklistContent = React.createClass({
                 this.renderCreateChecklistRow);
         }
         return (
-            <table className="checklist-items">
-                <tbody>
-                    {itemRows}
-                </tbody>
-            </table>
+            <div className="checklist-items">
+                {itemRows}
+            </div>
         )
     },
 

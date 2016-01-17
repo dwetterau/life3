@@ -27,7 +27,7 @@ RenderedChecklistContent = React.createClass({
         const itemRows = this.props.content.itemRows || [];
         return (
             <div className="event-content">
-                <div className="event-checklist-item-rows">
+                <div className="event-checklist">
                     {itemRows.map(this.renderChecklistItemRow)}
                 </div>
             </div>
