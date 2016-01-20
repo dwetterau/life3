@@ -1,5 +1,4 @@
 Events = new Mongo.Collection("events");
-Workouts = new Mongo.Collection("workouts");
 
 if (Meteor.isClient) {
     // This code is executed on the client only
@@ -7,19 +6,42 @@ if (Meteor.isClient) {
         passwordSignupFields: "USERNAME_ONLY"
     });
 
+    Meteor.subscribe("users");
     Meteor.subscribe("events");
 
-    Meteor.startup(function () {
-        // Use Meteor.startup to render the component after the page is ready
-        ReactDOM.render(<App />, document.getElementById("render-target"));
+    FlowRouter.route("/", {
+        action() {
+            ReactLayout.render(Layout, {content: <App />});
+        }
     });
+
+    FlowRouter.route("/:username", {
+        action(params) {
+            ReactLayout.render(Layout, {
+                content: <App username={params.username} />
+            });
+        }
+    });
+
+    Meteor.startup(function() {});
 }
 
 if (Meteor.isServer) {
+    Meteor.publish("users", function() {
+        return Meteor.users.find({}, {
+            fields: {
+                "username": true
+            }
+        });
+    });
+
     Meteor.publish("events", function() {
         return Events.find({
-            owner: this.userId
-        })
+            $or: [
+                {public: true},
+                {owner: this.userId}
+            ]
+        });
     });
 }
 

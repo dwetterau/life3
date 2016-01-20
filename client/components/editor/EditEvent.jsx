@@ -2,7 +2,8 @@ getEmptyEvent = () => {
     return {
         startTime: new Date(),
         title: "",
-        contents: []
+        contents: [],
+        public: false
     };
 };
 
@@ -38,6 +39,11 @@ EditEvent = React.createClass({
         this.setState({event: this.state.event});
     },
 
+    handlePublicChange() {
+        this.state.event.public = !this.state.event.public;
+        this.setState({event: this.state.event})
+    },
+
     handleContentChange(index, newContent) {
         this.state.event.contents[index] = newContent;
         this.setState({event: this.state.event});
@@ -67,6 +73,7 @@ EditEvent = React.createClass({
         newEvent.startTime = this.state.event.startTime;
         newEvent.title = this.state.event.title;
         newEvent.contents = this.state.event.contents;
+        newEvent.public = this.state.event.public;
 
         this.props.createFunc(newEvent);
 
@@ -150,6 +157,22 @@ EditEvent = React.createClass({
         )
     },
 
+    renderEditorPublicSelector() {
+        // TODO: Make this a select menu for the visibility options?
+        const verb = (this.state.event._id) ? "is" : "will be";
+        let text = `This event ${verb} visible to only you.`;
+        if (this.state.event.public) {
+            text = `This event ${verb} visible to the world.`;
+        }
+        return (
+            <div className="editor-public-container">
+                <div className="editor-public-changer"
+                     onClick={this.handlePublicChange}>
+                    {text}
+                </div>
+            </div>
+        )
+    },
 
     render() {
         return (
@@ -159,6 +182,7 @@ EditEvent = React.createClass({
                 {this.renderTitleEditor()}
                 {this.renderContentEditors()}
                 {this.renderEditorContentSelector()}
+                {this.renderEditorPublicSelector()}
             </div>
         )
     }
