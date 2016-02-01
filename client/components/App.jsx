@@ -9,13 +9,17 @@ App = React.createClass({
     getMeteorData() {
         let isCurrentUser = true;
         let currentUser = Meteor.user();
-        if (!currentUser && this.props.username) {
+        if (this.props.username) {
             const fetchedUser = Meteor.users.find({
                 username: this.props.username
             }).fetch();
             if (fetchedUser && fetchedUser.length == 1) {
-                // We aren't the current user, otherwise we wouldn't get here
-                isCurrentUser = false;
+                if (currentUser) {
+                    // Logged in, but looking at some other user
+                    isCurrentUser = this.props.username == currentUser.username;
+                } else {
+                    isCurrentUser = false;
+                }
                 currentUser = fetchedUser[0];
             }
         }
