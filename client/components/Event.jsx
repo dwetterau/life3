@@ -1,7 +1,8 @@
 contentTypes = {
     text: "text",
     budget: "budget",
-    checklist: "checklist"
+    checklist: "checklist",
+    photo: "photo"
 };
 
 Event = React.createClass({
@@ -36,12 +37,15 @@ Event = React.createClass({
     },
 
     renderContent(content, index) {
+        // TODO: should these be using the content's id instead of index?
         if (content.type == contentTypes.text) {
             return <RenderedTextContent key={index} content={content} />
         } else if (content.type == contentTypes.budget) {
             return <RenderedBudgetContent key={index} content={content} />
         } else if (content.type == contentTypes.checklist) {
             return <RenderedChecklistContent key={index} content={content} />
+        } else if (content.type == contentTypes.photo) {
+            return <RenderedPhotoContent key={index} content={content} />
         }
     },
 

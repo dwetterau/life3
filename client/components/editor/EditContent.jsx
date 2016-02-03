@@ -14,13 +14,17 @@ EditContent = React.createClass({
         if (this.props.content.type == contentTypes.text) {
             return <EditTextContent
                 content={this.props.content}
-                updateContent={this.props.updateContent}/>
+                updateContent={this.props.updateContent} />
         } else if (this.props.content.type == contentTypes.budget) {
             return <EditBudgetContent
                 content={this.props.content}
                 updateContent={this.props.updateContent} />
         } else if (this.props.content.type == contentTypes.checklist) {
             return <EditChecklistContent
+                content={this.props.content}
+                updateContent={this.props.updateContent} />
+        } else if (this.props.content.type == contentTypes.photo) {
+            return <EditPhotoContent
                 content={this.props.content}
                 updateContent={this.props.updateContent} />
         } else {

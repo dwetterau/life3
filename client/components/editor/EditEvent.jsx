@@ -61,6 +61,8 @@ EditEvent = React.createClass({
             this.state.event.contents.push(getEmptyBudgetContent());
         } else if (contentType == contentTypes.checklist) {
             this.state.event.contents.push(getEmptyChecklistContent());
+        } else if (contentType == contentTypes.photo) {
+            this.state.event.contents.push(getEmptyPhotoContent());
         }
         this.setState({event: this.state.event});
     },
