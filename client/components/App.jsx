@@ -47,6 +47,7 @@ App = React.createClass({
         return (
             <div className="header-container card">
                 <EditEvent event={getEmptyEvent()}
+                           isCurrentUser={this.data.isCurrentUser}
                            createFunc={this.createEventFunc} />
             </div>
         );
@@ -62,7 +63,11 @@ App = React.createClass({
         });
         let renderedEvents = [];
         allEvents.map((event) => {
-            renderedEvents.push(<Event key={event._id} event={event} />);
+            renderedEvents.push(
+                <Event key={event._id}
+                       isCurrentUser={this.data.isCurrentUser}
+                       event={event} />
+            );
         });
 
         // We reverse here for rendering purposes. This might change.

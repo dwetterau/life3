@@ -7,7 +7,8 @@ contentTypes = {
 
 Event = React.createClass({
     propTypes: {
-        event: React.PropTypes.object.isRequired
+        event: React.PropTypes.object.isRequired,
+        isCurrentUser: React.PropTypes.bool.isRequired,
     },
 
     getInitialState() {
@@ -32,6 +33,7 @@ Event = React.createClass({
     renderOptions() {
         return <EventOptions creating={false}
                              editing={this.state.inEditMode}
+                             isCurrentUser={this.props.isCurrentUser}
                              saveOrEditFunc={this.toggleEditMode}
                              deleteFunc={this.deleteEvent} />
     },
@@ -82,6 +84,7 @@ Event = React.createClass({
         } else {
             return (
                 <EditEvent event={this.props.event}
+                           isCurrentUser={this.props.isCurrentUser}
                            updateFunc={this.updateEvent}
                            deleteFunc={this.deleteEvent} />
             )

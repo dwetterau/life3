@@ -12,6 +12,9 @@ EditEvent = React.createClass({
         // The current properties of the event
         event: React.PropTypes.object.isRequired,
 
+        // Whether we are looking athte logged in user or not
+        isCurrentUser: React.PropTypes.bool.isRequired,
+
         // The function to call to create the event
         createFunc: React.PropTypes.func,
 
@@ -102,6 +105,7 @@ EditEvent = React.createClass({
             this.props.deleteFunc;
         return <EventOptions creating={this.state.creating}
                              editing={true}
+                             isCurrentUser={this.props.isCurrentUser}
                              saveOrEditFunc={saveOrEdit}
                              deleteFunc={deleteFunc} />
     },
