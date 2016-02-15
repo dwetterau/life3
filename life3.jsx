@@ -23,6 +23,24 @@ if (Meteor.isClient) {
         }
     });
 
+    FlowRouter.route("/:username/:path", {
+        action(params) {
+            ReactLayout.render(Layout, {
+                content: <App username={params.username}
+                              path={"/" + params.path} />
+            });
+        }
+    });
+
+    // TODO(david): Figure this out with better routing
+    FlowRouter.route("/:username/:path/:path2", {
+        action(params) {
+            ReactLayout.render(Layout, {
+                content: <App username={params.username}
+                              path={"/" + params.path + "/" + params.path2} />
+            });
+        }
+    });
     Meteor.startup(function() {});
 }
 

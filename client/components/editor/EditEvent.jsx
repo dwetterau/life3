@@ -3,7 +3,8 @@ getEmptyEvent = () => {
         startTime: new Date(),
         title: "",
         contents: [],
-        public: false
+        public: false,
+        path: "/"
     };
 };
 
@@ -39,6 +40,15 @@ EditEvent = React.createClass({
 
     handleDateChange(newDate) {
         this.state.event.startTime = newDate;
+        this.setState({event: this.state.event});
+    },
+
+    handlePathChange(e) {
+        let newPath = e.target.value;
+        if (!newPath.startsWith("/")) {
+            newPath = "/" + newPath;
+        }
+        this.state.event.path = newPath;
         this.setState({event: this.state.event});
     },
 
@@ -78,6 +88,7 @@ EditEvent = React.createClass({
         newEvent.startTime = this.state.event.startTime;
         newEvent.title = this.state.event.title;
         newEvent.contents = this.state.event.contents;
+        newEvent.path = this.state.event.path;
         newEvent.public = this.state.event.public;
 
         this.props.createFunc(newEvent);
@@ -163,6 +174,20 @@ EditEvent = React.createClass({
         )
     },
 
+    renderPathSelector() {
+        let path = "/";
+        if (this.props.event.hasOwnProperty("path")) {
+            path = this.props.event.path;
+        }
+        return (
+            <div className="event-path-editor">
+                <input type="text" placeholder="/"
+                       value={path}
+                       onChange={this.handlePathChange}/>
+            </div>
+        )
+    },
+
     renderEditorPublicSelector() {
         // TODO: Make this a select menu for the visibility options?
         const verb = (this.state.event._id) ? "is" : "will be";
@@ -188,6 +213,7 @@ EditEvent = React.createClass({
                 {this.renderTitleEditor()}
                 {this.renderContentEditors()}
                 {this.renderEditorContentSelector()}
+                {this.renderPathSelector()}
                 {this.renderEditorPublicSelector()}
             </div>
         )

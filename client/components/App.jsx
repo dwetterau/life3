@@ -1,7 +1,8 @@
 // App component - represents the whole app
 App = React.createClass({
     propTypes: {
-        username: React.PropTypes.string
+        username: React.PropTypes.string,
+        path: React.PropTypes.string
     },
 
     mixins: [ReactMeteorData],
@@ -57,6 +58,25 @@ App = React.createClass({
         let allEvents = this.data.events.map(function(event) {
             return event;
         });
+
+        // Filter out events that don't match the path
+        allEvents = this.data.events.filter(function(event) {
+            if (event.hasOwnProperty("path") && this.props.path) {
+                const pathComponents = event.path.split("/");
+                const prefixComponents = this.props.path.split("/");
+                // Note that we start at 1 because the first split thing should
+                // be the empty string.
+                let i;
+                for (i = 1; i < prefixComponents.length; i++) {
+                    if (pathComponents[i] != prefixComponents[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return !this.props.path;
+        }.bind(this));
+
         allEvents.sort(function(event1, event2) {
             return moment(event1.startTime).unix() - (
                     moment(event2.startTime).unix());
