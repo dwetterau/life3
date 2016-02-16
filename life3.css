@@ -1,5 +1,5 @@
 html {
-  background-color: rgb(238, 238, 238);
+  background-color: rgb(250, 250, 250);
 }
 
 .page-container header {
@@ -16,11 +16,11 @@ h1.page-title {
 
 div.card {
   background: #fff;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, .23), 0 3px 10px rgba(0, 0, 0, .16);
-  margin: 0 0 20px 0;
-  padding: 19px;
-  border-radius: 2px;
-  border: 0;
+  border: 1px solid rgba(0, 0, 0, .04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .03);
+  margin: 0 0 10px 0;
+  padding: 20px;
+  border-radius: 3px;
   color: rgba(0,0,0,.84);
   min-height: 20px;
   -webkit-tap-highlight-color: transparent;
@@ -101,11 +101,34 @@ div.date-picker select {
   border-bottom: solid 1px rgba(0, 0, 0, .16);
 }
 
+/* CSS for the event options */
 div.event-options {
   /* Very temporary CSS */
   cursor: pointer;
   text-align: right;
+  float: right;
+  display: flex;
+  flex-direction: row-reverse;
 }
+
+div.event-options div.event-options-list {
+  display: flex;
+}
+
+div.event-options a {
+  color: rgba(0, 0, 0, .6);
+  margin-left: .5em;
+}
+
+div.event-options a:hover {
+  color: rgba(0, 0, 0, .8);
+}
+
+div.event-options a:focus {
+  color: rgba(0, 0, 0, .8);
+}
+
+/* End of CSS for the event options */
 
 div.event-header {
   display: flex;

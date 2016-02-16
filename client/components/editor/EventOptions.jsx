@@ -17,8 +17,12 @@ EventOptions = React.createClass({
     },
 
     getInitialState() {
+        // If we are creating or currently editing, automatically have the menu
+        // expanded initially. Otherwise, keep it closed.
+        const forceExpanded = this.props.creating || this.props.editing;
         return {
-            expanded: false
+            expanded: forceExpanded,
+            allowCollapse: !forceExpanded
         }
     },
 
@@ -27,27 +31,30 @@ EventOptions = React.createClass({
     },
 
     renderExpander() {
-        const text = this.state.expanded ? "^" : "v";
+        if (!this.state.allowCollapse) {
+            return;
+        }
+        const text = this.state.expanded ? "close" : "options";
         return (
-            <div className="expander"
+            <a className="expander"
                  onClick={this.toggleExpand}>
                 {text}
-            </div>
+            </a>
         );
     },
 
     renderEventOptionEdit() {
-        const saveOrEdit = (this.props.creating) ? "Create" : (
-            (this.props.editing) ? "Save" : "Edit");
-        return <div className="event-option-edit"
-                    onClick={this.props.saveOrEditFunc}>{saveOrEdit}</div>
+        const saveOrEdit = (this.props.creating) ? "create" : (
+            (this.props.editing) ? "save" : "edit");
+        return <a className="event-option -edit"
+                  onClick={this.props.saveOrEditFunc}>{saveOrEdit}</a>
     },
 
     renderEventOptionDelete() {
         // There's nothing to delete if we're creating still
         if (this.props.creating) return;
-        return <div className="event-option-delete"
-                    onClick={this.props.deleteFunc}>Delete</div>
+        return <a className="event-option -delete"
+                  onClick={this.props.deleteFunc}>delete</a>
     },
 
     renderOptions() {
