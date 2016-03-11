@@ -28,6 +28,9 @@ App = React.createClass({
         let events = [];
         if (currentUser) {
             events = Events.find({owner: currentUser._id}).fetch()
+        } else if (window.location.pathname != "/welcome") {
+            // Redirect to welcome if we have nothing else to show.
+            window.location = "/welcome"
         }
         return {
             events: events,
@@ -113,10 +116,10 @@ App = React.createClass({
         return (
             <div className="page-container">
                 <header>
+                    <h1 className="page-title">Life</h1>
                     <div className="account-ui-wrapper">
                         <AccountsUIWrapper />
                     </div>
-                    <h1 className="page-title">L3</h1>
                 </header>
 
                 {this.data.currentUser ? this.renderPage() : ''}

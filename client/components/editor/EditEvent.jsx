@@ -176,8 +176,8 @@ EditEvent = React.createClass({
 
     renderPathSelector() {
         let path = "/";
-        if (this.props.event.hasOwnProperty("path")) {
-            path = this.props.event.path;
+        if (this.state.event.hasOwnProperty("path")) {
+            path = this.state.event.path;
         }
         return (
             <div className="event-path-editor">
