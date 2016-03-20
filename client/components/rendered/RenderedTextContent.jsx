@@ -7,9 +7,10 @@ RenderedTextContent = React.createClass({
         const source = this.props.content.description || "";
         return (
             <div className="event-content">
-                <ReactMarkdown
-                    className="event-description"
-                    source={source} />
+                <DraftEditor
+                    text={source}
+                    readOnly={true}
+                    onTextChange={(x) => {}} />
             </div>
         )
     }

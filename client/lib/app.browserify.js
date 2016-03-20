@@ -2,6 +2,7 @@
 moment = require('moment');
 uuid = require('node-uuid');
 
-// React packages
-ReactMarkdown = require('react-markdown');
-TextArea = require('react-textarea-autosize');
+// Draft-js support
+DraftJS = require('draft-js');
+DraftMarkup = require('draft-markup');
+MarkdownSyntax = require('draft-markup/syntaxes/markdown');

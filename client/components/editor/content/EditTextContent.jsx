@@ -29,8 +29,8 @@ EditTextContent = React.createClass({
         });
     },
 
-    handleDescriptionChange(e) {
-        this.props.content.description = e.target.value;
+    handleDescriptionChange(newRawContent) {
+        this.props.content.description = newRawContent;
         this.handleContentUpdate(this.props.content);
     },
 
@@ -38,9 +38,11 @@ EditTextContent = React.createClass({
     render() {
         return (
             <div className="text-content-editor">
-                <TextArea placeholder="Description"
-                          value={this.props.content.description || ""} rows={4}
-                          onChange={this.handleDescriptionChange}/>
+                <DraftEditor
+                    text={this.props.content.description}
+                    readOnly={false}
+                    onTextChange={this.handleDescriptionChange}
+                    placeholder={"Description..."} />
             </div>
         )
     }
