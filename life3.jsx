@@ -41,7 +41,19 @@ if (Meteor.isClient) {
             });
         }
     });
-    Meteor.startup(function() {})
+    Meteor.startup(function() {
+        // Hide the draft.js contentEditable warnings.
+        console.error = (function() {
+            var error = console.error;
+
+            return function(exception) {
+                if ((exception + '').indexOf(
+                        'Warning: A component is `contentEditable`') != 0) {
+                    error.apply(console, arguments)
+                }
+            }
+        })()
+    })
 }
 
 if (Meteor.isServer) {
