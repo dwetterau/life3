@@ -191,16 +191,16 @@ EditEvent = React.createClass({
     renderEditorPublicSelector() {
         // TODO: Make this a select menu for the visibility options?
         const verb = (this.state.event._id) ? "is" : "will be";
-        let text = `This event ${verb} visible to only you.`;
+        let text = `Only you ${verb} able see this.`;
         if (this.state.event.public) {
-            text = `This event ${verb} visible to the world.`;
+            text = `Anyone ${verb} able to see this.`;
         }
         return (
             <div className="editor-public-container">
-                <div className="editor-public-changer"
+                <a className="editor-public-changer"
                      onClick={this.handlePublicChange}>
                     {text}
-                </div>
+                </a>
             </div>
         )
     },

@@ -34,10 +34,13 @@ EditContent = React.createClass({
     },
 
     renderOptions() {
+        const deleteText = `delete this ${this.props.content.type}`;
         return (
-            <div className="content-options-menu"
-                 onClick={this.props.deleteContent}>
-                x
+            <div className="content-options-menu">
+                <a className="-option -delete"
+                     onClick={this.props.deleteContent}>
+                    {deleteText}
+                </a>
             </div>
         )
     },

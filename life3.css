@@ -77,8 +77,37 @@ div.page-container {
 }
 
 .editor-selector-container :hover {
-  background-color: rgb(238, 238, 238);
+  background-color: rgba(0, 0, 0, .04);
 }
+
+div.editor-public-container a {
+  cursor: pointer;
+  color: rgba(0, 0, 0, .6);
+}
+
+div.editor-public-container a:hover {
+  color: rgba(0, 0, 0, .8);
+}
+
+/* CSS for content options */
+div.content-options-menu {
+  display: flex;
+  justify-content: flex-end;
+}
+
+div.content-options-menu a {
+  cursor: pointer;
+  color: rgba(0, 0, 0, .6);
+}
+
+div.content-options-menu a:hover {
+  color: rgba(0, 0, 0, .8);
+}
+
+div.content-options-menu a:focus {
+  color: rgba(0, 0, 0, .8);
+}
+/* End of CSS for content options */
 
 div.text-content-editor {
   display: flex;

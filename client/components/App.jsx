@@ -116,7 +116,7 @@ App = React.createClass({
         return (
             <div className="page-container">
                 <header>
-                    <h1 className="page-title">Life</h1>
+                    <h1 className="page-title">Lens</h1>
                     <div className="account-ui-wrapper">
                         <AccountsUIWrapper />
                     </div>
