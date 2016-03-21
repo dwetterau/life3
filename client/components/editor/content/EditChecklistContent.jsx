@@ -91,7 +91,7 @@ EditChecklistContent = React.createClass({
                                 this, index)} />
                 </div>
                 <div className="checklist-description-container">
-                    <TextArea
+                    <textarea
                         placeholder="Description"
                         value={row.description || ""} rows={1}
                         onChange={this.handleItemRowDescriptionChange.bind(

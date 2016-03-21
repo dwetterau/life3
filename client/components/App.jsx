@@ -22,6 +22,9 @@ App = React.createClass({
                     isCurrentUser = false;
                 }
                 currentUser = fetchedUser[0];
+            } else {
+                // TODO: Show a 404, lets just go home right now.
+                this.redirectHome();
             }
         }
 
@@ -41,6 +44,10 @@ App = React.createClass({
 
     createEventFunc(event) {
         return Meteor.call("addEvent", event)
+    },
+
+    redirectHome() {
+        window.location = "/";
     },
 
     renderCreateNewEvent() {
@@ -116,7 +123,9 @@ App = React.createClass({
         return (
             <div className="page-container">
                 <header>
-                    <h1 className="page-title">Lens</h1>
+                    <h1 className="page-title" onClick={this.redirectHome}>
+                        Lens
+                    </h1>
                     <div className="account-ui-wrapper">
                         <AccountsUIWrapper />
                     </div>

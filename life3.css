@@ -11,6 +11,7 @@ html {
 
 h1.page-title {
   margin: auto 0;
+  cursor: pointer;
 }
 
 /* Sketchy fixes for the login stuff */
@@ -112,16 +113,23 @@ div.content-options-menu a:focus {
 /* CSS for draft.js based editor */
 div.text-content-editor .public-DraftEditor-content {
   min-height: 100px;
+  border-bottom: solid 1px rgba(0, 0, 0, .16);
+  margin-bottom: 1em;
 }
 
 div.text-content-editor .public-DraftEditorPlaceholder-root {
   position: absolute;
-  color: rgba(0, 0, 0, .8);
+  color: rgba(0, 0, 0, .6);
   z-index: 0;
+}
+
+div.text-content-editor .-hide-placeHolder .public-DraftEditorPlaceholder-root {
+  display: none;
 }
 
 div.text-content-editor .draft-editor-buttons {
   display: flex;
+  border-bottom: solid 1px rgba(0, 0, 0, .16);
 }
 
 div.text-content-editor .draft-editor-buttons div {

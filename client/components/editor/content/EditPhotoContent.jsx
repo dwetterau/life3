@@ -48,7 +48,7 @@ EditPhotoContent = React.createClass({
                 <input className="photo-url-editor" type="text"
                        placeholder="http://" value={this.props.content.url}
                        onChange={this.handleUrlChange} />
-                <TextArea placeholder="Description"
+                <textarea placeholder="Description"
                           value={this.props.content.description || ""} rows={2}
                           onChange={this.handleDescriptionChange}/>
             </div>

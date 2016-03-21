@@ -135,9 +135,19 @@ DraftEditor = React.createClass({
     },
 
     render() {
+        // If the user changes block type before entering any text, we can
+        // either style the placeholder or hide it. Let's just hide it now.
+        let className = 'draft-editor';
+        var contentState = this.state.editorState.getCurrentContent();
+        if (!contentState.hasText()) {
+            if (contentState.getBlockMap().first().getType() !== 'unstyled') {
+                className += ' -hide-placeHolder';
+            }
+        }
+
         const {editorState} = this.state;
         return (
-            <div className="draft-editor">
+            <div className={className}>
                 {this.renderEditorButtons()}
                 <DraftJS.Editor
                     editorState={editorState}
