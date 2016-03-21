@@ -44,12 +44,56 @@ DraftEditor = React.createClass({
         this.setState({editorState})
     },
 
+    // Editor buttons
+    // Inline styles
+    inlineStyleOptions: [
+        {label: 'Bold', style: 'BOLD'},
+        {label: 'Italic', style: 'ITALIC'},
+        {label: 'Underline', style: 'UNDERLINE'},
+        {label: 'Code', style: 'CODE'}
+    ],
+
+    _handleInlineClick(inlineStyle) {
+        this.onChange(DraftJS.RichUtils.toggleInlineStyle(
+            this.state.editorState, inlineStyle));
+    },
+
+    renderEditorButtons() {
+        if (this.props.readOnly) {
+            return;
+        }
+        let currentStyle = this.state.editorState.getCurrentInlineStyle();
+        return (
+            <div className="draft-editor-buttons">
+                {this.inlineStyleOptions.map((styleOptions) => {
+                    let className = "-" + styleOptions.label;
+                    if (currentStyle.has(styleOptions.style)) {
+                        className += " -active"
+                    }
+                    return (
+                        <div key={styleOptions.label}
+                             className={className}
+                             onClick={this._handleInlineClick.bind(
+                                this, styleOptions.style)}>
+                            {styleOptions.label}
+                        </div>
+                    );
+                })}
+            </div>
+        )
+    },
+
     render() {
         const {editorState} = this.state;
-        return <DraftJS.Editor
-            editorState={editorState}
-            readOnly={this.props.readOnly}
-            onChange={this.onChange}
-            placeholder={this.props.placeholder} />
+        return (
+            <div className="draft-editor">
+                {this.renderEditorButtons()}
+                <DraftJS.Editor
+                    editorState={editorState}
+                    readOnly={this.props.readOnly}
+                    onChange={this.onChange}
+                    placeholder={this.props.placeholder} />
+            </div>
+        );
     }
 });
