@@ -53,18 +53,15 @@ DraftEditor = React.createClass({
         {label: 'Code', style: 'CODE'}
     ],
 
-    _handleInlineClick(inlineStyle) {
+    handleInlineClick(inlineStyle) {
         this.onChange(DraftJS.RichUtils.toggleInlineStyle(
             this.state.editorState, inlineStyle));
     },
 
-    renderEditorButtons() {
-        if (this.props.readOnly) {
-            return;
-        }
+    renderInlineButtons() {
         let currentStyle = this.state.editorState.getCurrentInlineStyle();
         return (
-            <div className="draft-editor-buttons">
+            <div className="inline-styles">
                 {this.inlineStyleOptions.map((styleOptions) => {
                     let className = "-" + styleOptions.label;
                     if (currentStyle.has(styleOptions.style)) {
@@ -73,12 +70,66 @@ DraftEditor = React.createClass({
                     return (
                         <div key={styleOptions.label}
                              className={className}
-                             onClick={this._handleInlineClick.bind(
+                             onClick={this.handleInlineClick.bind(
                                 this, styleOptions.style)}>
                             {styleOptions.label}
                         </div>
                     );
                 })}
+            </div>
+        );
+    },
+
+    // Block styles
+    blockStyleOptions: [
+        {label: 'H1', style: 'header-one'},
+        {label: 'H2', style: 'header-two'},
+        {label: 'H3', style: 'header-three'},
+        {label: 'Blockquote', style: 'blockquote'},
+        {label: 'UL', style: 'unordered-list-item'},
+        {label: 'OL', style: 'ordered-list-item'},
+        {label: 'Code Block', style: 'code-block'}
+    ],
+
+    handleBlockClick(blockStyle) {
+        this.onChange(DraftJS.RichUtils.toggleBlockType(
+            this.state.editorState, blockStyle));
+    },
+
+    renderBlockButtons() {
+        const selection = this.state.editorState.getSelection();
+        const blockType = this.state.editorState
+            .getCurrentContent()
+            .getBlockForKey(selection.getStartKey())
+            .getType();
+        return (
+            <div className="block-styles">
+                {this.blockStyleOptions.map((styleOptions) => {
+                    let className = "-" + styleOptions.label;
+                    if (blockType == styleOptions.style) {
+                        className += " -active"
+                    }
+                    return (
+                        <div key={styleOptions.label}
+                             className={className}
+                             onClick={this.handleBlockClick.bind(
+                                this, styleOptions.style)}>
+                            {styleOptions.label}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    },
+
+    renderEditorButtons() {
+        if (this.props.readOnly) {
+            return;
+        }
+        return (
+            <div className="draft-editor-buttons">
+                {this.renderInlineButtons()}
+                {this.renderBlockButtons()}
             </div>
         )
     },
