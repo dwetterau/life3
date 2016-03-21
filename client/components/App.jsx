@@ -23,8 +23,8 @@ App = React.createClass({
                 }
                 currentUser = fetchedUser[0];
             } else {
-                // TODO: Show a 404, lets just go home right now.
-                this.redirectHome();
+                // TODO: Show a 404, lets just go home right now. Oh wait,
+                // that causes a redirect loop. Need to investigate!
             }
         }
 
