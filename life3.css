@@ -70,7 +70,7 @@ div.page-container {
 
 .editor-selector-tile {
   width: 100px;
-  height: 100px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,38 +117,51 @@ div.text-content-editor .public-DraftEditor-content {
   margin-bottom: 1em;
 }
 
-div.text-content-editor .public-DraftEditorPlaceholder-root {
+div .public-DraftEditorPlaceholder-root {
   position: absolute;
-  color: rgba(0, 0, 0, .6);
+  pointer-events: none;
+  color: rgba(0, 0, 0, .4);
   z-index: 0;
 }
 
-div.text-content-editor .-hide-placeHolder .public-DraftEditorPlaceholder-root {
+div .-hide-placeHolder .public-DraftEditorPlaceholder-root {
   display: none;
 }
 
-div.text-content-editor .draft-editor-buttons {
+div .draft-editor-buttons {
   display: flex;
   border-bottom: solid 1px rgba(0, 0, 0, .16);
 }
 
-div.text-content-editor .draft-editor-buttons div {
+div .draft-editor-buttons div {
   display: flex;
   justify-content: space-between;
 }
 
-div.text-content-editor .draft-editor-buttons div div {
+div .draft-editor-buttons div div {
   cursor: pointer;
   margin-right: 1em;
 }
 
-div.text-content-editor .draft-editor-buttons div div:hover {
+div .draft-editor-buttons div div:hover {
   background-color: rgba(0, 0, 0, .04);
 }
 
-div.text-content-editor .draft-editor-buttons div div.-active {
+div .draft-editor-buttons div div.-active {
   background-color: rgba(0, 0, 0, .08);
   font-weight: 400;
+}
+
+div.public-DraftEditor-content h1 {
+  margin-bottom: 0;
+}
+
+div.public-DraftEditor-content h2 {
+  margin-bottom: 0;
+}
+
+div.public-DraftEditor-content h3 {
+  margin-bottom: 0;
 }
 /* End of CSS for draft.js based editor */
 
@@ -187,7 +200,7 @@ div.date-picker select {
   background: none;
   outline: none;
   border: none;
-  border-bottom: solid 1px rgba(0, 0, 0, .16);
+  font-family: 'Crimson Text', 'serif';
 }
 
 /* CSS for the event options */
@@ -225,6 +238,13 @@ div.event-header {
 }
 
 div.event-header div.event-title {
+  margin-top: .2em;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+div.event-title-editor .public-DraftEditorPlaceholder-root {
+  margin-top: 0;
   font-size: 2em;
   font-weight: bold;
 }
@@ -272,7 +292,7 @@ div.budget-value.-negative {
 }
 
 div.date-picker {
-  margin-bottom: 1em;
+  margin-bottom: .5em;
 }
 
 div.date-picker select:first-child {

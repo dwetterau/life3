@@ -10,6 +10,7 @@ RenderedTextContent = React.createClass({
                 <DraftEditor
                     text={source}
                     readOnly={true}
+                    showOptions={false}
                     onTextChange={(x) => {}} />
             </div>
         )

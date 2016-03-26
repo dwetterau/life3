@@ -42,6 +42,7 @@ EditTextContent = React.createClass({
                     text={this.props.content.description}
                     readOnly={false}
                     onTextChange={this.handleDescriptionChange}
+                    showOptions={true}
                     placeholder={"Description..."} />
             </div>
         )

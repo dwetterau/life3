@@ -10,6 +10,10 @@ DraftEditor = React.createClass({
 
         onTextChange: React.PropTypes.func.isRequired,
 
+        showOptions: React.PropTypes.bool.isRequired,
+
+        initialOptions: React.PropTypes.object,
+
         placeholder: React.PropTypes.string
     },
 
@@ -37,6 +41,49 @@ DraftEditor = React.createClass({
         return editorState;
     },
 
+    initializeEditor(props, editorState) {
+        // initialize the editor styles that we want, forcing into them if we
+        // have to.
+        if (!props.initialOptions) return;
+        if (props.initialOptions.hasOwnProperty("inline")) {
+            let currentStyle = editorState.getCurrentInlineStyle();
+            props.initialOptions["inline"].forEach(function(style) {
+                if (!currentStyle.has(style)) {
+                    this.handleInlineClick(style, editorState)
+                }
+            }.bind(this));
+        }
+        if (props.initialOptions.hasOwnProperty("block")) {
+            const blockType = this.getBlockType(editorState);
+            console.log(blockType, props.initialOptions["block"]);
+            if (blockType != props.initialOptions["block"]) {
+                this.handleBlockClick(
+                    props.initialOptions["block"],
+                    editorState);
+            }
+        }
+    },
+
+    getBlockType(editorState) {
+        const selection = editorState.getSelection();
+        return editorState.getCurrentContent()
+            .getBlockForKey(selection.getStartKey())
+            .getType();
+    },
+
+    componentDidMount() {
+        this.initializeEditor(this.props, this.state.editorState);
+    },
+
+    componentWillReceiveProps(newProps) {
+        if (!newProps.text && this.props.text) {
+            console.log("Will receive new props", newProps);
+            const editorState = this.getInitialEditorState(newProps.text);
+            this.onChange(editorState);
+            this.initializeEditor(newProps, editorState);
+        }
+    },
+
     onChange(editorState) {
         const contentState = editorState.getCurrentContent();
         const rawContent = DraftJS.convertToRaw(contentState);
@@ -53,9 +100,12 @@ DraftEditor = React.createClass({
         {label: 'Code', style: 'CODE'}
     ],
 
-    handleInlineClick(inlineStyle) {
+    handleInlineClick(inlineStyle, editorState) {
+        if (!editorState) {
+            editorState = this.state.editorState;
+        }
         this.onChange(DraftJS.RichUtils.toggleInlineStyle(
-            this.state.editorState, inlineStyle));
+            editorState, inlineStyle));
     },
 
     renderInlineButtons() {
@@ -91,17 +141,16 @@ DraftEditor = React.createClass({
         {label: 'Code Block', style: 'code-block'}
     ],
 
-    handleBlockClick(blockStyle) {
+    handleBlockClick(blockStyle, editorState) {
+        if (!editorState) {
+            editorState = this.state.editorState;
+        }
         this.onChange(DraftJS.RichUtils.toggleBlockType(
-            this.state.editorState, blockStyle));
+            editorState, blockStyle));
     },
 
     renderBlockButtons() {
-        const selection = this.state.editorState.getSelection();
-        const blockType = this.state.editorState
-            .getCurrentContent()
-            .getBlockForKey(selection.getStartKey())
-            .getType();
+        const blockType = this.getBlockType(this.state.editorState);
         return (
             <div className="block-styles">
                 {this.blockStyleOptions.map((styleOptions) => {
@@ -123,7 +172,7 @@ DraftEditor = React.createClass({
     },
 
     renderEditorButtons() {
-        if (this.props.readOnly) {
+        if (this.props.readOnly || !this.props.showOptions) {
             return;
         }
         return (
@@ -140,7 +189,11 @@ DraftEditor = React.createClass({
         let className = 'draft-editor';
         var contentState = this.state.editorState.getCurrentContent();
         if (!contentState.hasText()) {
-            if (contentState.getBlockMap().first().getType() !== 'unstyled') {
+            const type = contentState.getBlockMap().first().getType();
+            if (!(type == 'unstyled' || (
+                    this.props.initialOptions &&
+                    this.props.initialOptions.hasOwnProperty("block") &&
+                    type == this.props.initialOptions["block"]))) {
                 className += ' -hide-placeHolder';
             }
         }

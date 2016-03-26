@@ -33,8 +33,12 @@ EditEvent = React.createClass({
         }
     },
 
-    handleTitleChange(e) {
-        this.state.event.title = e.target.value;
+    handleTitleChange(rawContent) {
+        let title = converter.toText(rawContent);
+        if (title.indexOf("#") == 0) {
+            title = title.replace(new RegExp("#", "g"), "").trim();
+        }
+        this.state.event.title = title;
         this.setState({event: this.state.event});
     },
 
@@ -129,9 +133,13 @@ EditEvent = React.createClass({
     renderTitleEditor() {
         return (
             <div className="event-title-editor">
-                <input type="text" placeholder="Title"
-                       value={this.state.event.title}
-                       onChange={this.handleTitleChange}/>
+                <DraftEditor
+                    text={this.state.event.title}
+                    readOnly={false}
+                    onTextChange={this.handleTitleChange}
+                    showOptions={false}
+                    initialOptions={{"block": "header-one"}}
+                    placeholder={"Title"} />
             </div>
         )
     },

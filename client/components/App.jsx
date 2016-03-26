@@ -33,7 +33,7 @@ App = React.createClass({
             events = Events.find({owner: currentUser._id}).fetch()
         } else if (window.location.pathname != "/welcome") {
             // Redirect to welcome if we have nothing else to show.
-            window.location = "/welcome"
+            // TODO: This doesn't work on mobile either :(
         }
         return {
             events: events,
