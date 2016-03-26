@@ -101,9 +101,6 @@ DraftEditor = React.createClass({
     ],
 
     handleInlineClick(inlineStyle, editorState) {
-        if (!editorState) {
-            editorState = this.state.editorState;
-        }
         this.onChange(DraftJS.RichUtils.toggleInlineStyle(
             editorState, inlineStyle));
     },
@@ -121,7 +118,8 @@ DraftEditor = React.createClass({
                         <div key={styleOptions.label}
                              className={className}
                              onClick={this.handleInlineClick.bind(
-                                this, styleOptions.style)}>
+                                this, styleOptions.style,
+                                this.state.editorState)}>
                             {styleOptions.label}
                         </div>
                     );
@@ -142,9 +140,6 @@ DraftEditor = React.createClass({
     ],
 
     handleBlockClick(blockStyle, editorState) {
-        if (!editorState) {
-            editorState = this.state.editorState;
-        }
         this.onChange(DraftJS.RichUtils.toggleBlockType(
             editorState, blockStyle));
     },
@@ -162,7 +157,8 @@ DraftEditor = React.createClass({
                         <div key={styleOptions.label}
                              className={className}
                              onClick={this.handleBlockClick.bind(
-                                this, styleOptions.style)}>
+                                this, styleOptions.style,
+                                this.state.editorState)}>
                             {styleOptions.label}
                         </div>
                     );
