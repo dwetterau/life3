@@ -138,7 +138,7 @@ EditEvent = React.createClass({
                     readOnly={false}
                     onTextChange={this.handleTitleChange}
                     showOptions={false}
-                    initialOptions={{"block": "header-one"}}
+                    initialOptions={{}}
                     placeholder={"Title"} />
             </div>
         )

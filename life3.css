@@ -243,7 +243,7 @@ div.event-header div.event-title {
   font-weight: bold;
 }
 
-div.event-title-editor .public-DraftEditorPlaceholder-root {
+div.event-title-editor {
   margin-top: 0;
   font-size: 2em;
   font-weight: bold;

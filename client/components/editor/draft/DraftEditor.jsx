@@ -53,9 +53,11 @@ DraftEditor = React.createClass({
                 }
             }.bind(this));
         }
-        if (props.initialOptions.hasOwnProperty("block")) {
+        // TODO: Un-disable this. There are issues right now with setting the
+        // block type, typing some stuff, and then deleting it all. Seems
+        // like the draft.js contributors are aware of the issue.
+        if (false && props.initialOptions.hasOwnProperty("block")) {
             const blockType = this.getBlockType(editorState);
-            console.log(blockType, props.initialOptions["block"]);
             if (blockType != props.initialOptions["block"]) {
                 this.handleBlockClick(
                     props.initialOptions["block"],
@@ -77,7 +79,6 @@ DraftEditor = React.createClass({
 
     componentWillReceiveProps(newProps) {
         if (!newProps.text && this.props.text) {
-            console.log("Will receive new props", newProps);
             const editorState = this.getInitialEditorState(newProps.text);
             this.onChange(editorState);
             this.initializeEditor(newProps, editorState);
