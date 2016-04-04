@@ -8,7 +8,7 @@ contentTypes = {
 Event = React.createClass({
     propTypes: {
         event: React.PropTypes.object.isRequired,
-        isCurrentUser: React.PropTypes.bool.isRequired,
+        isCurrentUser: React.PropTypes.bool.isRequired
     },
 
     getInitialState() {
@@ -60,15 +60,38 @@ Event = React.createClass({
         )
     },
 
+    renderEventPath() {
+        // On show the sharing path if we're the current user
+        if (!this.props.isCurrentUser) return;
+        let path = "/";
+        if (this.props.event.hasOwnProperty("path")) {
+            path = this.props.event.path;
+        }
+        if (path == "/") return;
+        path = encodeURI(path);
+        return (
+            <div className="event-path">
+                Located at: {path}
+            </div>
+        )
+    },
+
     renderEventBody() {
         const formattedDate = moment(this.props.event.startTime).format("ll");
         return (
             <div className="event-body">
                 <div className="event-header">
                     <div className="event-date">{formattedDate}</div>
-                    <div className="event-title">{this.props.event.title}</div>
+                    <div className="event-title">
+                        <DraftEditor
+                            text={this.props.event.title}
+                            readOnly={true}
+                            showOptions={false}
+                            onTextChange={(x) => {}} />
+                    </div>
                 </div>
                 {this.renderEventContents()}
+                {this.renderEventPath()}
             </div>
         )
     },

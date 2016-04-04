@@ -47,11 +47,7 @@ EditEvent = React.createClass({
         this.setState({event: this.state.event});
     },
 
-    handlePathChange(e) {
-        let newPath = e.target.value;
-        if (!newPath.startsWith("/")) {
-            newPath = "/" + newPath;
-        }
+    handlePathChange(newPath) {
         this.state.event.path = newPath;
         this.setState({event: this.state.event});
     },
@@ -187,13 +183,8 @@ EditEvent = React.createClass({
         if (this.state.event.hasOwnProperty("path")) {
             path = this.state.event.path;
         }
-        return (
-            <div className="event-path-editor">
-                <input type="text" placeholder="/"
-                       value={path}
-                       onChange={this.handlePathChange}/>
-            </div>
-        )
+        return <PathEditor path={this.state.event.path}
+                           onChange={this.handlePathChange} />
     },
 
     renderEditorPublicSelector() {

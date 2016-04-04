@@ -76,6 +76,8 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
+    // TODO: Better input validation. In particular, we need to make sure that
+    // paths are sane on creation and update.
     addEvent(content) {
         // Only logged in users can create events
         if (!Meteor.userId()) {
