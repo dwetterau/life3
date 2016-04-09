@@ -1,3 +1,6 @@
+import moment from "moment"
+import React from "react";
+
 DatePicker = React.createClass({
     propTypes: {
         // A Date() object

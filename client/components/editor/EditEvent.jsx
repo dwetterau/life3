@@ -1,3 +1,5 @@
+import React from "react"
+
 getEmptyEvent = () => {
     return {
         startTime: new Date(),

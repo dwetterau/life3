@@ -1,3 +1,5 @@
+import React from "react"
+
 RenderedChecklistContent = React.createClass({
     propTypes: {
         content: React.PropTypes.object.isRequired

@@ -1,3 +1,5 @@
+import React from "react";
+
 PathEditor = React.createClass({
     propTypes: {
         // The initial current path value

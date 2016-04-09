@@ -1,3 +1,6 @@
+import React from "react"
+import {render} from "react-dom"
+
 Events = new Mongo.Collection("events");
 
 if (Meteor.isClient) {
@@ -11,34 +14,37 @@ if (Meteor.isClient) {
 
     FlowRouter.route("/", {
         action() {
-            ReactLayout.render(Layout, {content: <App />});
+            render(<App />, document.getElementById("render-target"));
         }
     });
 
     FlowRouter.route("/:username", {
         action(params) {
-            ReactLayout.render(Layout, {
-                content: <App username={params.username} />
-            });
+            render(
+                <App username={params.username} />,
+                document.getElementById("render-target")
+            );
         }
     });
 
     FlowRouter.route("/:username/:path", {
         action(params) {
-            ReactLayout.render(Layout, {
-                content: <App username={params.username}
-                              path={"/" + params.path} />
-            });
+            render(
+                <App username={params.username}
+                     path={"/" + params.path} />,
+                document.getElementById("render-target")
+            );
         }
     });
 
     // TODO(david): Figure this out with better routing
     FlowRouter.route("/:username/:path/:path2", {
         action(params) {
-            ReactLayout.render(Layout, {
-                content: <App username={params.username}
-                              path={"/" + params.path + "/" + params.path2} />
-            });
+            render(
+                <App username={params.username}
+                     path={"/" + params.path + "/" + params.path2} />,
+                document.getElementById("render-target")
+            );
         }
     });
     Meteor.startup(function() {

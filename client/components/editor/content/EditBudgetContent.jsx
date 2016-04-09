@@ -1,3 +1,6 @@
+import uuid from "node-uuid"
+import React from "react";
+
 getEmptyBudgetContent = () => {
     return {
         _id: uuid.v4(),

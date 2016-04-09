@@ -1,0 +1,18 @@
+{
+  "description": "An app by David Wetterau",
+  "dependencies": {
+    "draft-js": "^0.4.0",
+    "draft-markup": "^0.1.0",
+    "meteor-node-stubs": "^0.2.3",
+    "moment": "^2.12.0",
+    "node-uuid": "^1.4.7",
+    "react": "^15.0.1",
+    "react-addons-pure-render-mixin": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "react-markdown": "^2.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dwetterau/life3.git"
+  }
+}

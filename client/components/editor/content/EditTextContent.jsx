@@ -1,3 +1,6 @@
+import uuid from "node-uuid"
+import React from "react";
+
 getEmptyTextContent = () => {
     return {
         _id: uuid.v4(),

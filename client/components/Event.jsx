@@ -1,3 +1,6 @@
+import moment from "moment"
+import React from "react"
+
 contentTypes = {
     text: "text",
     budget: "budget",

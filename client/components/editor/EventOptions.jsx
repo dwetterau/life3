@@ -1,3 +1,5 @@
+import React from "react"
+
 EventOptions = React.createClass({
     propTypes: {
         // Whether or not an event is being created currently

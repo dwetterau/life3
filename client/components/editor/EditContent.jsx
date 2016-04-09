@@ -1,3 +1,5 @@
+import React from "react"
+
 EditContent = React.createClass({
     propTypes: {
         // The current properties of the content
