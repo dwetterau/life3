@@ -216,7 +216,8 @@ div.path-editor div.path-part-editor {
 }
 
 div.path-editor div.label {
-  margin-right: 1em;
+  width: 50px;
+  margin-right: .5em;
 }
 
 div.path-editor .edit-container {
@@ -285,6 +286,11 @@ div.event-title-editor {
 
 div.event-path {
   color: rgba(0, 0, 0, .6);
+}
+
+div.event-path a {
+  color: inherit;
+  margin-left: .5em;
 }
 
 div.event-header div.event-date {

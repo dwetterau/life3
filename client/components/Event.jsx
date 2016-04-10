@@ -11,7 +11,8 @@ contentTypes = {
 Event = React.createClass({
     propTypes: {
         event: React.PropTypes.object.isRequired,
-        isCurrentUser: React.PropTypes.bool.isRequired
+        isCurrentUser: React.PropTypes.bool.isRequired,
+        currentUser: React.PropTypes.object.isRequired
     },
 
     getInitialState() {
@@ -71,10 +72,12 @@ Event = React.createClass({
             path = this.props.event.path;
         }
         if (path == "/") return;
+        path = "/" + this.props.currentUser.username + path;
         path = encodeURI(path);
         return (
             <div className="event-path">
-                Located at: {path}
+                Located at:
+                <a href={path}>{path}</a>
             </div>
         )
     },

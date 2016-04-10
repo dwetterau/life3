@@ -18,8 +18,8 @@ App = React.createClass({
     },
 
     getMeteorData() {
-        let isCurrentUser = true;
-        let currentUser = Meteor.user();
+        let isCurrentUser = false;
+        let currentUser = null;
         if (this.props.username) {
             const fetchedUser = Meteor.users.find({
                 username: this.props.username
@@ -33,8 +33,7 @@ App = React.createClass({
                 }
                 currentUser = fetchedUser[0];
             } else {
-                // TODO: Show a 404, lets just go home right now. Oh wait,
-                // that causes a redirect loop. Need to investigate!
+                this.redirectTo404();
             }
         }
 
@@ -59,6 +58,12 @@ App = React.createClass({
     redirectHome() {
         window.location = "/";
     },
+
+    redirectTo404: _.debounce(function() {
+        if (!this.data.currentUser) {
+            window.location = "/404"
+        }
+    }, 500),
 
     debouncedExtendEvents: _.debounce(function() {
         this.setState({maxEventIndex: this.state.maxEventIndex + 10});
@@ -132,6 +137,7 @@ App = React.createClass({
             renderedEvents.push(
                 <Event key={event._id}
                        isCurrentUser={this.data.isCurrentUser}
+                       currentUser={this.data.currentUser}
                        event={event} />
             );
         });

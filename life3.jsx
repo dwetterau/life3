@@ -1,21 +1,37 @@
+import Q from "q"
 import React from "react"
 import {render} from "react-dom"
 
 Events = new Mongo.Collection("events");
 
-if (Meteor.isClient) {
-    // This code is executed on the client only
-    Accounts.ui.config({
-        passwordSignupFields: "USERNAME_ONLY"
-    });
-
-    Meteor.subscribe("users");
-    Meteor.subscribe("events");
-
+const registerRoutes = function() {
     FlowRouter.route("/", {
+        triggersEnter: [function(context, redirect) {
+            // see if the user is logged in
+            const userId = Meteor.userId();
+            if (userId) {
+                const user = Meteor.users.findOne(userId);
+                redirect("/" + encodeURI(user.username))
+            } else {
+                // Hack, this is actually a user called "welcome"
+                redirect("/welcome")
+            }
+        }],
         action() {
             render(<App />, document.getElementById("render-target"));
         }
+    });
+
+    // Error handling
+    [404].forEach(function(code) {
+        FlowRouter.route("/" + code, {
+            action() {
+                render(
+                    <Error code={code} />,
+                    document.getElementById("render-target")
+                );
+            }
+        });
     });
 
     FlowRouter.route("/:username", {
@@ -47,38 +63,52 @@ if (Meteor.isClient) {
             );
         }
     });
-    Meteor.startup(function() {
-        // Hide the draft.js contentEditable warnings.
-        console.error = (function() {
-            var error = console.error;
+};
 
-            return function(exception) {
-                if ((exception + '').indexOf(
-                        'Warning: A component is `contentEditable`') != 0) {
-                    error.apply(console, arguments)
+if (Meteor.isClient) {
+    // This code is executed on the client only
+    Accounts.ui.config({
+        passwordSignupFields: "USERNAME_ONLY"
+    });
+
+    Q.nfcall(Meteor.subscribe, "users")
+        .then(Q.nfcall(Meteor.subscribe, "events"))
+        .then(registerRoutes())
+        .then(Q.nfcall(Meteor.startup, function() {
+            // Hide the draft.js contentEditable warnings.
+            /*
+            console.error = (function() {
+                var error = console.error;
+
+                return function(exception) {
+                    if ((exception + '').indexOf(
+                            'Warning: A component is `contentEditable`') != 0) {
+                        error.apply(console, arguments)
+                    }
                 }
-            }
-        })()
-    })
+            })()*/
+        }));
 }
 
 if (Meteor.isServer) {
-    Meteor.publish("users", function() {
-        return Meteor.users.find({}, {
-            fields: {
-                "username": true
-            }
+    Tracker.autorun(function() {
+        Meteor.publish("users", function() {
+            return Meteor.users.find({}, {
+                fields: {
+                    "username": true
+                }
+            });
         });
-    });
 
-    Meteor.publish("events", function() {
-        return Events.find({
-            $or: [
-                {public: true},
-                {owner: this.userId}
-            ]
+        Meteor.publish("events", function() {
+            return Events.find({
+                $or: [
+                    {public: true},
+                    {owner: this.userId}
+                ]
+            });
         });
-    });
+    })
 }
 
 Meteor.methods({
