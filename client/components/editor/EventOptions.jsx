@@ -9,7 +9,7 @@ EventOptions = React.createClass({
         editing: React.PropTypes.bool.isRequired,
 
         // Whether the user is looking at their own page or not
-        isCurrentUser: React.PropTypes.bool.isRequired,
+        isFetchedUser: React.PropTypes.bool.isRequired,
 
         // The function to call when the Save/Edit button is clicked on
         saveOrEditFunc: React.PropTypes.func.isRequired,
@@ -74,7 +74,7 @@ EventOptions = React.createClass({
 
     render() {
         // If we aren't looking at our own events, offer no options.
-        if (!this.props.isCurrentUser) {
+        if (!this.props.isFetchedUser) {
             return <div className="event-options"></div>;
         }
         return (

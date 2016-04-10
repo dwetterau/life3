@@ -18,28 +18,37 @@ App = React.createClass({
     },
 
     getMeteorData() {
-        let isCurrentUser = false;
-        let currentUser = null;
+        Meteor.subscribe("users");
+        Meteor.subscribe("events");
+        let isFetchedUser = false;
+        let currentUser = Meteor.user();
+        let fetchedUser = null;
         if (this.props.username) {
-            const fetchedUser = Meteor.users.find({
+            // There is a username in the url
+            fetchedUser = Meteor.users.findOne({
                 username: this.props.username
-            }).fetch();
-            if (fetchedUser && fetchedUser.length == 1) {
+            });
+            if (fetchedUser) {
                 if (currentUser) {
-                    // Logged in, but looking at some other user
-                    isCurrentUser = this.props.username == currentUser.username;
+                    // Logged in, check if we are looking at some other user
+                    isFetchedUser = this.props.username == currentUser.username;
                 } else {
-                    isCurrentUser = false;
+                    // Not logged in, and looking at a real user
+                    isFetchedUser = false;
                 }
-                currentUser = fetchedUser[0];
             } else {
                 this.redirectTo404();
+            }
+        } else {
+            // We're looking at root. If we're logged in, we should redirect
+            if (currentUser) {
+                this.redirectToUser();
             }
         }
 
         let events = [];
-        if (currentUser) {
-            events = Events.find({owner: currentUser._id}).fetch()
+        if (fetchedUser) {
+            events = Events.find({owner: fetchedUser._id}).fetch()
         } else if (window.location.pathname != "/welcome") {
             // Redirect to welcome if we have nothing else to show.
             // TODO: This doesn't work on mobile either :(
@@ -47,7 +56,8 @@ App = React.createClass({
         return {
             events: events,
             currentUser: currentUser,
-            isCurrentUser: isCurrentUser
+            fetchedUser: fetchedUser,
+            isFetchedUser: isFetchedUser
         }
     },
 
@@ -60,10 +70,14 @@ App = React.createClass({
     },
 
     redirectTo404: _.debounce(function() {
-        if (!this.data.currentUser) {
+        if (!this.data.fetchedUser) {
             window.location = "/404"
         }
     }, 500),
+
+    redirectToUser() {
+        window.location = "/" + encodeURIComponent(Meteor.user().username)
+    },
 
     debouncedExtendEvents: _.debounce(function() {
         this.setState({maxEventIndex: this.state.maxEventIndex + 10});
@@ -87,13 +101,13 @@ App = React.createClass({
 
     renderCreateNewEvent() {
         // If we aren't on our own page and logged in, we can't edit.
-        if (!this.data.isCurrentUser) {
+        if (!this.data.isFetchedUser) {
             return;
         }
         return (
             <div className="header-container card">
                 <EditEvent event={getEmptyEvent()}
-                           isCurrentUser={this.data.isCurrentUser}
+                           isFetchedUser={this.data.isFetchedUser}
                            createFunc={this.createEventFunc} />
             </div>
         );
@@ -136,8 +150,8 @@ App = React.createClass({
         allEvents.map((event) => {
             renderedEvents.push(
                 <Event key={event._id}
-                       isCurrentUser={this.data.isCurrentUser}
-                       currentUser={this.data.currentUser}
+                       isFetchedUser={this.data.isFetchedUser}
+                       fetchedUser={this.data.fetchedUser}
                        event={event} />
             );
         });
@@ -171,7 +185,7 @@ App = React.createClass({
                     </div>
                 </header>
 
-                {this.data.currentUser ? this.renderPage() : ''}
+                {this.data.fetchedUser ? this.renderPage() : 'Loading...'}
             </div>
         );
     }

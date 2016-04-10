@@ -9,9 +9,8 @@ const registerRoutes = function() {
         triggersEnter: [function(context, redirect) {
             // see if the user is logged in
             const userId = Meteor.userId();
-            if (userId) {
-                const user = Meteor.users.findOne(userId);
-                redirect("/" + encodeURI(user.username))
+            if (userId && Meteor.user()) {
+                redirect("/" + encodeURI(Meteor.user().username))
             } else {
                 // Hack, this is actually a user called "welcome"
                 redirect("/welcome")
@@ -70,24 +69,8 @@ if (Meteor.isClient) {
     Accounts.ui.config({
         passwordSignupFields: "USERNAME_ONLY"
     });
-
-    Q.nfcall(Meteor.subscribe, "users")
-        .then(Q.nfcall(Meteor.subscribe, "events"))
-        .then(registerRoutes())
-        .then(Q.nfcall(Meteor.startup, function() {
-            // Hide the draft.js contentEditable warnings.
-            /*
-            console.error = (function() {
-                var error = console.error;
-
-                return function(exception) {
-                    if ((exception + '').indexOf(
-                            'Warning: A component is `contentEditable`') != 0) {
-                        error.apply(console, arguments)
-                    }
-                }
-            })()*/
-        }));
+    registerRoutes();
+    Meteor.startup(function() {});
 }
 
 if (Meteor.isServer) {

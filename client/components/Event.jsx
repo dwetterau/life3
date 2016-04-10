@@ -11,8 +11,8 @@ contentTypes = {
 Event = React.createClass({
     propTypes: {
         event: React.PropTypes.object.isRequired,
-        isCurrentUser: React.PropTypes.bool.isRequired,
-        currentUser: React.PropTypes.object.isRequired
+        isFetchedUser: React.PropTypes.bool.isRequired,
+        fetchedUser: React.PropTypes.object.isRequired
     },
 
     getInitialState() {
@@ -37,7 +37,7 @@ Event = React.createClass({
     renderOptions() {
         return <EventOptions creating={false}
                              editing={this.state.inEditMode}
-                             isCurrentUser={this.props.isCurrentUser}
+                             isFetchedUser={this.props.isFetchedUser}
                              saveOrEditFunc={this.toggleEditMode}
                              deleteFunc={this.deleteEvent} />
     },
@@ -66,13 +66,13 @@ Event = React.createClass({
 
     renderEventPath() {
         // On show the sharing path if we're the current user
-        if (!this.props.isCurrentUser) return;
+        if (!this.props.isFetchedUser) return;
         let path = "/";
         if (this.props.event.hasOwnProperty("path")) {
             path = this.props.event.path;
         }
         if (path == "/") return;
-        path = "/" + this.props.currentUser.username + path;
+        path = "/" + this.props.fetchedUser.username + path;
         path = encodeURI(path);
         return (
             <div className="event-path">
@@ -113,7 +113,7 @@ Event = React.createClass({
         } else {
             return (
                 <EditEvent event={this.props.event}
-                           isCurrentUser={this.props.isCurrentUser}
+                           isFetchedUser={this.props.isFetchedUser}
                            updateFunc={this.updateEvent}
                            deleteFunc={this.deleteEvent} />
             )

@@ -10,7 +10,7 @@ html {
 }
 
 h1.page-title {
-  margin: auto 0;
+  margin: .3em 0 auto;
   cursor: pointer;
 }
 
