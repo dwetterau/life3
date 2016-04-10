@@ -11,7 +11,7 @@ const registerRoutes = function() {
             const userId = Meteor.userId();
             if (userId && Meteor.user()) {
                 redirect("/" + encodeURI(Meteor.user().username))
-            } else {
+            } else if (!userId) {
                 // Hack, this is actually a user called "welcome"
                 redirect("/welcome")
             }
