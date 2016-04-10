@@ -1,5 +1,6 @@
 import moment from "moment"
 import React from "react"
+import _ from "underscore"
 
 // App component - represents the whole app
 App = React.createClass({
@@ -9,6 +10,12 @@ App = React.createClass({
     },
 
     mixins: [ReactMeteorData],
+
+    getInitialState() {
+        return {
+            maxEventIndex: 10 // Used for infinite scroll
+        }
+    },
 
     getMeteorData() {
         let isCurrentUser = true;
@@ -53,6 +60,26 @@ App = React.createClass({
         window.location = "/";
     },
 
+    debouncedExtendEvents: _.debounce(function() {
+        this.setState({maxEventIndex: this.state.maxEventIndex + 10});
+    }, 200, true),
+
+    handleScroll(event) {
+        // Near the bottom
+        const ele = event.target.scrollingElement;
+        if (ele.scrollTop + $(window).height() > ele.scrollHeight - 50) {
+            this.debouncedExtendEvents();
+        }
+    },
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll);
+    },
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll)
+    },
+
     renderCreateNewEvent() {
         // If we aren't on our own page and logged in, we can't edit.
         if (!this.data.isCurrentUser) {
@@ -91,9 +118,15 @@ App = React.createClass({
         }.bind(this));
 
         allEvents.sort(function(event1, event2) {
-            return moment(event1.startTime).unix() - (
-                    moment(event2.startTime).unix());
+            return moment(event2.startTime).unix() - (
+                    moment(event1.startTime).unix());
         });
+
+        // Paginate the events.
+        allEvents = allEvents.filter(function(event, index) {
+            return index < this.state.maxEventIndex
+        }.bind(this));
+
         let renderedEvents = [];
         allEvents.map((event) => {
             renderedEvents.push(
@@ -103,8 +136,6 @@ App = React.createClass({
             );
         });
 
-        // We reverse here for rendering purposes. This might change.
-        renderedEvents.reverse();
         return (
             <div className="timeline-container">
                 {renderedEvents}
