@@ -9,10 +9,16 @@ PathEditor = React.createClass({
         onChange: React.PropTypes.func.isRequired
     },
 
-
     getInitialState() {
         // Split the path into parts, or set the defaults
         return this.fromPath(this.props.path);
+    },
+
+    componentWillReceiveProps(newProps) {
+        // Proper clearing on submit
+        if (newProps.path == "/") {
+            this.setState(this.fromPath(newProps.path))
+        }
     },
 
     fromPath(path) {
@@ -78,7 +84,7 @@ PathEditor = React.createClass({
                             "edit-container" + (
                             (this.state.folder) ? tokenizedClass : "")} >
                         <input type="text" className="edit-folder"
-                               defaultValue={this.state.folder}
+                               value={this.state.folder}
                                onChange={this.handleFolderChange} />
                     </div>
                 </div>
@@ -88,7 +94,7 @@ PathEditor = React.createClass({
                             "edit-container" + (
                             (this.state.filename) ? tokenizedClass : "")} >
                         <input type="text" className="edit-filename"
-                               defaultValue={this.state.filename}
+                               value={this.state.filename}
                                onChange={this.handleFileChange} />
                     </div>
                 </div>

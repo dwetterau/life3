@@ -185,7 +185,7 @@ EditEvent = React.createClass({
         if (this.state.event.hasOwnProperty("path")) {
             path = this.state.event.path;
         }
-        return <PathEditor path={this.state.event.path}
+        return <PathEditor path={path}
                            onChange={this.handlePathChange} />
     },
 
