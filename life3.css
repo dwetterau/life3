@@ -129,6 +129,10 @@ div .-hide-placeHolder .public-DraftEditorPlaceholder-root {
   display: none;
 }
 
+div .draft-editor {
+  position: relative;
+}
+
 div .draft-editor-buttons {
   display: flex;
   border-bottom: solid 1px rgba(0, 0, 0, .16);
@@ -164,6 +168,24 @@ div.public-DraftEditor-content h2 {
 div.public-DraftEditor-content h3 {
   margin-bottom: 0;
 }
+
+/* CSS for editing links */
+div.link-editor {
+  position: absolute;
+  width: 50%;
+  display: flex;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, .04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
+  padding: 1em;
+}
+
+div.link-editor a {
+  margin-left: 1em;
+  cursor: pointer;
+}
+
+
 /* End of CSS for draft.js based editor */
 
 div.budget-content-editor {

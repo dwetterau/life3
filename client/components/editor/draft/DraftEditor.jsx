@@ -25,7 +25,23 @@ DraftEditor = React.createClass({
     getInitialState() {
         // Convert the markdown text to an initial content object
         const editorState = this.getInitialEditorState(this.props.text);
-        return {editorState};
+        return {
+            editorState,
+            // State for link editing
+            editingLink: false,
+            urlValue: ''
+        };
+    },
+
+    findLinkEntities(contentBlock, callback) {
+        contentBlock.findEntityRanges(
+            (character) => {
+                const entityKey = character.getEntity();
+                return entityKey != null && (
+                    DraftJS.Entity.get(entityKey).getType() === 'LINK');
+            },
+            callback
+        );
     },
 
     getInitialEditorState(text) {
@@ -36,12 +52,18 @@ DraftEditor = React.createClass({
         }
         const blocks = DraftJS.convertFromRaw(rawContent);
         let editorState;
+        const decorator = new DraftJS.CompositeDecorator([{
+            strategy: this.findLinkEntities,
+            component: Link
+        }]);
+
         if (blocks.length) {
             const contentState =
                 DraftJS.ContentState.createFromBlockArray(blocks);
-            editorState = DraftJS.EditorState.createWithContent(contentState)
+            editorState = DraftJS.EditorState.createWithContent(
+                contentState, decorator)
         } else {
-            editorState = DraftJS.EditorState.createEmpty()
+            editorState = DraftJS.EditorState.createEmpty(decorator)
         }
         return editorState;
     },
@@ -173,6 +195,59 @@ DraftEditor = React.createClass({
         );
     },
 
+    // Other custom styles
+    promptForLink() {
+        this.setState({editingLink: !this.state.editingLink, urlValue: ''})
+    },
+
+    handleUrlChange(e) {
+        this.setState({urlValue: e.target.value})
+    },
+
+    handleUrlKeyDown(e) {
+        if (e.which === 13) {
+            this.createNewLink();
+        }
+    },
+
+    createNewLink() {
+        const entityKey = DraftJS.Entity.create('LINK', 'MUTABLE', {
+            url: this.state.urlValue});
+        this.setState({
+            editorState: DraftJS.RichUtils.toggleLink(
+                this.state.editorState,
+                this.state.editorState.getSelection(),
+                entityKey
+            ),
+            editingLink: false,
+            urlValue: ''
+        })
+    },
+
+    renderLinkPrompt() {
+        if (!this.state.editingLink) return;
+        return (
+            <div className="link-editor">
+                <input type="text" placeholder="Type link here.."
+                       value={this.state.urlValue}
+                       onChange={this.handleUrlChange}
+                       onKeyDown={this.handleUrlKeyDown} />
+                <a onClick={this.createNewLink}>done</a>
+            </div>
+        )
+    },
+
+    renderLinkButton() {
+        return (
+            <div className="link-button-container">
+                <div className="link-button"
+                     onClick={this.promptForLink} >
+                    Link
+                </div>
+            </div>
+        )
+    },
+
     renderEditorButtons() {
         if (this.props.readOnly || !this.props.showOptions) {
             return;
@@ -181,6 +256,7 @@ DraftEditor = React.createClass({
             <div className="draft-editor-buttons">
                 {this.renderInlineButtons()}
                 {this.renderBlockButtons()}
+                {this.renderLinkButton()}
             </div>
         )
     },
@@ -204,6 +280,7 @@ DraftEditor = React.createClass({
         return (
             <div className={className}>
                 {this.renderEditorButtons()}
+                {this.renderLinkPrompt()}
                 <DraftJS.Editor
                     editorState={editorState}
                     readOnly={this.props.readOnly}
