@@ -72,7 +72,7 @@ Event = React.createClass({
             path = this.props.event.path;
         }
         if (path == "/") return;
-        path = "/" + this.props.fetchedUser.username + path;
+        path = "/u/" + encodeURI(this.props.fetchedUser.username) + path;
         path = encodeURI(path);
         return (
             <div className="event-path">

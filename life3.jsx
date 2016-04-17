@@ -10,7 +10,7 @@ const registerRoutes = function() {
             // see if the user is logged in
             const userId = Meteor.userId();
             if (userId && Meteor.user()) {
-                redirect("/" + encodeURI(Meteor.user().username))
+                redirect("/u/" + encodeURI(Meteor.user().username))
             } else if (!userId) {
                 // Hack, this is actually a user called "welcome"
                 redirect("/welcome")
@@ -33,7 +33,16 @@ const registerRoutes = function() {
         });
     });
 
-    FlowRouter.route("/:username", {
+    FlowRouter.route("/welcome", {
+        action() {
+            render(
+                <App username="welcome" />,
+                document.getElementById("render-target")
+            );
+        }
+    });
+
+    FlowRouter.route("/u/:username", {
         action(params) {
             render(
                 <App username={params.username} />,
@@ -42,22 +51,21 @@ const registerRoutes = function() {
         }
     });
 
-    FlowRouter.route("/:username/:path", {
+    FlowRouter.route("/u/:username/:folder", {
         action(params) {
             render(
                 <App username={params.username}
-                     path={"/" + params.path} />,
+                     path={"/" + params.folder} />,
                 document.getElementById("render-target")
             );
         }
     });
 
-    // TODO(david): Figure this out with better routing
-    FlowRouter.route("/:username/:path/:path2", {
+    FlowRouter.route("/u/:username/:folder/:name", {
         action(params) {
             render(
                 <App username={params.username}
-                     path={"/" + params.path + "/" + params.path2} />,
+                     path={"/" + params.folder + "/" + params.name} />,
                 document.getElementById("render-target")
             );
         }

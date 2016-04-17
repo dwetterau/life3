@@ -76,7 +76,7 @@ App = React.createClass({
     }, 500),
 
     redirectToUser() {
-        window.location = "/" + encodeURIComponent(Meteor.user().username)
+        window.location = "/u/" + encodeURIComponent(Meteor.user().username)
     },
 
     debouncedExtendEvents: _.debounce(function() {
