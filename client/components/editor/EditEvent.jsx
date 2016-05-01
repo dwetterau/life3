@@ -1,4 +1,5 @@
 import React from "react"
+import DraftJS from "draft-js"
 
 getEmptyEvent = () => {
     return {
@@ -36,11 +37,8 @@ EditEvent = React.createClass({
     },
 
     handleTitleChange(rawContent) {
-        let title = converter.toText(rawContent);
-        if (title.indexOf("#") == 0) {
-            title = title.replace(new RegExp("#", "g"), "").trim();
-        }
-        this.state.event.title = title;
+        const contentState = DraftJS.convertFromRaw(rawContent);
+        this.state.event.title = contentState.getPlainText().trim();
         this.setState({event: this.state.event});
     },
 

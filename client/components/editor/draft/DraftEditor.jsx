@@ -1,9 +1,6 @@
 import DraftJS from "draft-js"
-import DraftMarkup from "draft-markup"
-import MarkdownSyntax from "draft-markup/syntaxes/markdown";
 import React from "react";
 
-converter = new DraftMarkup(MarkdownSyntax);
 DraftEditor = React.createClass({
     propTypes: {
         text: React.PropTypes.oneOfType([
@@ -45,27 +42,21 @@ DraftEditor = React.createClass({
     },
 
     getInitialEditorState(text) {
-        let rawContent = text;
-        if (typeof(rawContent) == "string") {
+        let contentState;
+
+        if (typeof(text) == "string") {
             // The legacy conversion flow
-            rawContent =  converter.toRawContent(text);
+            contentState = DraftJS.ContentState.createFromText(text.trim())
+        } else {
+            contentState = DraftJS.convertFromRaw(text)
         }
-        const blocks = DraftJS.convertFromRaw(rawContent);
-        let editorState;
+
         const decorator = new DraftJS.CompositeDecorator([{
             strategy: this.findLinkEntities,
             component: Link
         }]);
 
-        if (blocks.length) {
-            const contentState =
-                DraftJS.ContentState.createFromBlockArray(blocks);
-            editorState = DraftJS.EditorState.createWithContent(
-                contentState, decorator)
-        } else {
-            editorState = DraftJS.EditorState.createEmpty(decorator)
-        }
-        return editorState;
+        return DraftJS.EditorState.createWithContent(contentState, decorator);
     },
 
     initializeEditor(props, editorState) {
@@ -196,17 +187,21 @@ DraftEditor = React.createClass({
     },
 
     // Other custom styles
-    promptForLink() {
-        this.setState({editingLink: !this.state.editingLink, urlValue: ''})
+    promptForLink(createFunc) {
+        this.setState({
+            editingLink: !this.state.editingLink,
+            urlValue: '',
+            createFunc: createFunc
+        })
     },
 
     handleUrlChange(e) {
         this.setState({urlValue: e.target.value})
     },
 
-    handleUrlKeyDown(e) {
+    handleUrlKeyDown(e, createFunc) {
         if (e.which === 13) {
-            this.createNewLink();
+            createFunc();
         }
     },
 
@@ -220,7 +215,25 @@ DraftEditor = React.createClass({
                 entityKey
             ),
             editingLink: false,
-            urlValue: ''
+            urlValue: '',
+            createFunc: null
+        })
+    },
+
+    createImageBlock() {
+        const entityKey = DraftJS.Entity.create('image', 'IMMUTABLE', {
+            src: this.state.urlValue});
+
+        const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
+            this.state.editorState,
+            entityKey,
+            ' '
+        );
+        this.setState({
+            editorState: editorState,
+            editingLink: false,
+            urlValue: '',
+            createFunc: null
         })
     },
 
@@ -231,8 +244,12 @@ DraftEditor = React.createClass({
                 <input type="text" placeholder="Type link here.."
                        value={this.state.urlValue}
                        onChange={this.handleUrlChange}
-                       onKeyDown={this.handleUrlKeyDown} />
-                <a onClick={this.createNewLink}>done</a>
+                       onKeyDown={this.handleUrlKeyDown.bind(
+                            this,
+                            this.state.createFunc
+                       )}
+                />
+                <a onClick={this.state.createFunc}>done</a>
             </div>
         )
     },
@@ -241,8 +258,21 @@ DraftEditor = React.createClass({
         return (
             <div className="link-button-container">
                 <div className="link-button"
-                     onClick={this.promptForLink} >
+                     onClick={this.promptForLink.bind(this,
+                        this.createNewLink)} >
                     Link
+                </div>
+            </div>
+        )
+    },
+
+    renderImageButton() {
+        return (
+            <div className="image-button-container">
+                <div className="image-button"
+                     onClick={this.promptForLink.bind(this,
+                        this.createImageBlock)} >
+                    Image
                 </div>
             </div>
         )
@@ -257,8 +287,18 @@ DraftEditor = React.createClass({
                 {this.renderInlineButtons()}
                 {this.renderBlockButtons()}
                 {this.renderLinkButton()}
+                {this.renderImageButton()}
             </div>
         )
+    },
+
+    mediaBlockRenderer(block) {
+        if (block.getType() === 'atomic') {
+            return {
+                component: Media,
+                editable: false
+            };
+        }
     },
 
     render() {
@@ -282,6 +322,7 @@ DraftEditor = React.createClass({
                 {this.renderEditorButtons()}
                 {this.renderLinkPrompt()}
                 <DraftJS.Editor
+                    blockRendererFn={this.mediaBlockRenderer}
                     editorState={editorState}
                     readOnly={this.props.readOnly}
                     onChange={this.onChange}
