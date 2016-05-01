@@ -5,7 +5,9 @@ getEmptyEvent = () => {
     return {
         startTime: new Date(),
         title: "",
-        contents: [],
+        contents: [
+            getEmptyTextContent()
+        ],
         public: false,
         path: "/"
     };

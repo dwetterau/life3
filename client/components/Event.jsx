@@ -4,8 +4,7 @@ import React from "react"
 contentTypes = {
     text: "text",
     budget: "budget",
-    checklist: "checklist",
-    photo: "photo"
+    checklist: "checklist"
 };
 
 Event = React.createClass({
@@ -50,8 +49,6 @@ Event = React.createClass({
             return <RenderedBudgetContent key={index} content={content} />
         } else if (content.type == contentTypes.checklist) {
             return <RenderedChecklistContent key={index} content={content} />
-        } else if (content.type == contentTypes.photo) {
-            return <RenderedPhotoContent key={index} content={content} />
         }
     },
 

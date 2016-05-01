@@ -25,10 +25,6 @@ EditContent = React.createClass({
             return <EditChecklistContent
                 content={this.props.content}
                 updateContent={this.props.updateContent} />
-        } else if (this.props.content.type == contentTypes.photo) {
-            return <EditPhotoContent
-                content={this.props.content}
-                updateContent={this.props.updateContent} />
         } else {
             console.error("Unknown content type, cannot render editor ",
                 this.props.content.type);
