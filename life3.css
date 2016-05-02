@@ -439,7 +439,7 @@ div.photo-container.default img {
 div.photo-container.inline50 {
   max-width: 50%;
   float: left;
-  margin-bottom: -10px;
+  margin-bottom: -5px;
   margin-right: .5em;
 }
 
@@ -451,7 +451,7 @@ div.photo-container.inline50 img {
 div.photo-container.inline25 {
   max-width: 25%;
   float: left;
-  margin-bottom: -10px;
+  margin-bottom: -5px;
   margin-right: .5em;
 }
 
