@@ -7,7 +7,9 @@ Media = React.createClass({
         const entityKey = this.props.block.getEntityAt(0);
         let newViewMode = Entity.get(entityKey).getData().viewMode;
         if (newViewMode === "default") {
-            newViewMode = "inline"
+            newViewMode = "inline50"
+        } else if(newViewMode === "inline50") {
+            newViewMode = "inline25"
         } else {
             newViewMode = "default"
         }
@@ -19,8 +21,10 @@ Media = React.createClass({
         // TODO: Support other types of Media
         const data = Entity.get(this.props.block.getEntityAt(0)).getData();
         let className = "photo-container";
-        if (data.viewMode === "inline") {
-            className += " inline"
+        if (data.viewMode === "inline50") {
+            className += " inline50 clearfix"
+        } else if (data.viewMode === "inline25") {
+            className += " inline25 clearfix"
         } else {
             className += " default"
         }

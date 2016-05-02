@@ -122,6 +122,15 @@ div.text-content-editor .public-DraftEditor-content {
   margin: 0;
 }
 
+/* Clearfix the bottom of all editors */
+.public-DraftEditor-content:after {
+  content: " "; /* Older browser do not support empty content */
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
+}
+
 div .public-DraftEditorPlaceholder-root {
   position: absolute;
   pointer-events: none;
@@ -423,18 +432,38 @@ div.photo-container.default {
 }
 
 div.photo-container.default img {
-  max-height: 480px;
   max-width: 100%;
+  max-height: 480px;
 }
 
-div.photo-container.inline {
-  display: flex;
-  justify-content: space-around;
-  background-color: rgba(0, 0, 0, .16);
-  margin: 0 -20px;
-}
-
-div.photo-container.inline img {
+div.photo-container.inline50 {
   max-width: 50%;
+  float: left;
+  margin-bottom: -10px;
+  margin-right: .5em;
+}
+
+div.photo-container.inline50 img {
+  max-width: 100%;
   max-height: 240px;
+}
+
+div.photo-container.inline25 {
+  max-width: 25%;
+  float: left;
+  margin-bottom: -10px;
+  margin-right: .5em;
+}
+
+div.photo-container.inline25 img {
+  max-width: 100%;
+  max-height: 120px;
+}
+
+.clearfix:after {
+  content: " "; /* Older browser do not support empty content */
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
 }
