@@ -221,8 +221,10 @@ DraftEditor = React.createClass({
     },
 
     createImageBlock() {
-        const entityKey = DraftJS.Entity.create('image', 'IMMUTABLE', {
-            src: this.state.urlValue});
+        const entityKey = DraftJS.Entity.create('image', 'MUTABLE', {
+            src: this.state.urlValue,
+            viewMode: "default"
+        });
 
         const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
             this.state.editorState,
@@ -296,7 +298,10 @@ DraftEditor = React.createClass({
         if (block.getType() === 'atomic') {
             return {
                 component: Media,
-                editable: false
+                editable: false,
+                props: {
+                    readOnly: this.props.readOnly
+                }
             };
         }
     },
