@@ -92,12 +92,13 @@ if (Meteor.isServer) {
         });
 
         Meteor.publish("events", function() {
+            // Publish events sorted by newest first.
             return Events.find({
                 $or: [
                     {public: true},
                     {owner: this.userId}
                 ]
-            });
+            }, {sort: {startTime: -1}});
         });
     })
 }
