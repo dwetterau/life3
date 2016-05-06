@@ -3,6 +3,7 @@ import React from "react"
 import {render} from "react-dom"
 
 Events = new Mongo.Collection("events");
+EventsSearchIndex = new Mongo.Collection("events-search-index");
 
 const registerRoutes = function() {
     FlowRouter.route("/", {
@@ -81,6 +82,10 @@ if (Meteor.isClient) {
     Meteor.startup(function() {});
 }
 
+// stub functions that only need to be done on the server:
+let indexEvent = (event) => {};
+let removeEventFromIndex = (eventId) => {};
+
 if (Meteor.isServer) {
     Tracker.autorun(function() {
         Meteor.publish("users", function() {
@@ -100,19 +105,52 @@ if (Meteor.isServer) {
                 ]
             }, {sort: {startTime: -1}});
         });
-    })
+    });
+    // Startup the search service
+    const SearchService = require("./server/search");
+    const searchService = new SearchService(Events, EventsSearchIndex);
+    searchService.start();
+
+    // Fix up the stub functions.
+    indexEvent = (event) =>  {
+        searchService.indexEvent(event);
+    };
+    removeEventFromIndex = (eventId) => {
+        searchService.removeEventFromIndex(eventId);
+    };
+
+    Meteor.methods({
+        getEventIds(query) {
+            const matchingEventIds = searchService.getEvents(query);
+            const events = Events.find({
+                $and: [
+                    {_id: {$in: matchingEventIds}},
+                    {$or: [
+                        {public: true},
+                        {owner: this.userId}
+                    ]}
+                ]
+            }).fetch();
+            return events.map((event) => {
+                return event._id;
+            });
+        }
+    });
 }
 
 Meteor.methods({
     // TODO: Better input validation. In particular, we need to make sure that
     // paths are sane on creation and update.
-    addEvent(content) {
+    addEvent(event) {
         // Only logged in users can create events
         if (!Meteor.userId()) {
             throw new Meteor.Error("not-authorized");
         }
-        content.owner = Meteor.userId();
-        return Events.insert(content);
+        event.owner = Meteor.userId();
+        // Set the eventId on the event for search infra.
+        event._id = Events.insert(event);
+        indexEvent(event);
+        return event;
     },
 
     updateEvent(eventId, event) {
@@ -133,6 +171,9 @@ Meteor.methods({
         Events.update(eventId, {
             $set: event
         });
+        // Set the eventId back on the event for the search infra.
+        event._id = eventId;
+        indexEvent(event);
     },
 
     deleteEvent(eventId) {
@@ -146,6 +187,7 @@ Meteor.methods({
         if (owner != currentEvent.owner) {
             throw new Meteor.Error("not-authorized");
         }
-        Events.remove(eventId)
+        Events.remove(eventId);
+        removeEventFromIndex(eventId);
     }
 });
