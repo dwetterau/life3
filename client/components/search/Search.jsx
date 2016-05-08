@@ -23,12 +23,6 @@ Search = React.createClass({
                 return this.props.eventsById.hasOwnProperty(eventId);
             });
 
-            // Sort the events by startTime (latest -> oldest) before limiting.
-            eventIds.sort((a, b) => {
-                return this.props.eventsById[b].startTime - (
-                        this.props.eventsById[a].startTime);
-            });
-
             // Limit the results to render
             eventIds = eventIds.filter((eventId, index) => {
                 return index < this.state.resultLimit;
@@ -59,7 +53,7 @@ Search = React.createClass({
 
     render() {
         return (
-            <div className="search-container card">
+            <div className="search-container">
                 <input className="search-box"
                        onChange={this.updateQueryText}
                        placeholder="Search..."/>

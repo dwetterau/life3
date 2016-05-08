@@ -130,10 +130,10 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         getEventIds(query) {
-            const eventIdToPriority = searchService.getEvents(query);
+            const eventIdToPriorityAndDate = searchService.getEvents(query);
             const events = Events.find({
                 $and: [
-                    {_id: {$in: Object.keys(eventIdToPriority)}},
+                    {_id: {$in: Object.keys(eventIdToPriorityAndDate)}},
                     {$or: [
                         {public: true},
                         {owner: this.userId}
@@ -141,9 +141,17 @@ if (Meteor.isServer) {
                 ]
             }).fetch();
 
-            // sort the output from highest priority to lowest
+            // sort the output from highest priority to lowest. Break ties by
+            // date.
             events.sort((a, b) => {
-                return eventIdToPriority[b._id] - eventIdToPriority[a._id];
+                a = eventIdToPriorityAndDate[a._id];
+                b = eventIdToPriorityAndDate[b._id];
+                let toReturn = b.priority - a.priority;
+                if (toReturn == 0) {
+                    // Break ties by date
+                    return b.date - a.date;
+                }
+                return toReturn;
             });
 
             return events.map((event) => {

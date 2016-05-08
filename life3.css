@@ -110,6 +110,25 @@ div.content-options-menu a:focus {
 }
 /* End of CSS for content options */
 
+/* CSS for the logged in page header */
+div.create-new-button {
+  margin-top: 1em;
+}
+
+div.create-new-button a {
+  cursor: pointer;
+  color: rgba(0, 0, 0, .6);
+}
+
+div.create-new-button a:hover {
+  color: rgba(0, 0, 0, .8);
+}
+
+div.create-new-button a:focus {
+  color: rgba(0, 0, 0, .8);
+}
+/* End of CSS for the logged in page header */
+
 /* CSS for draft.js based editor */
 div.text-content-editor .public-DraftEditor-content {
   min-height: 100px;

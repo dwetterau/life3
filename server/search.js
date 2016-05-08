@@ -39,7 +39,11 @@ class SearchService {
         // user the real FT search index on this thing.
         this.EventsSearchIndex.upsert(
             {token: token},
-            {$addToSet: {events: {id: event._id, priority: priority}}}
+            {$addToSet: {events: {id: event._id,
+                                  priority: priority,
+                                  date: event.startTime}
+                        }
+            }
         );
     }
 
@@ -125,11 +129,11 @@ class SearchService {
             token = token.toLowerCase();
             let events = this.trie.getEvents(token);
             Object.keys(events).forEach((eventId) => {
-                const priority = events[eventId];
+                const {priority, date} = events[eventId];
                 if (!validEvents.hasOwnProperty(eventId)) {
                     validEvents[eventId] = [];
                 }
-                validEvents[eventId].push(priority);
+                validEvents[eventId].push({priority, date});
             })
         });
 
@@ -140,10 +144,13 @@ class SearchService {
                 // lower than the others, then the entire qurey must not be at
                 // the highest priority level
                 let minPriority = 10;
-                validEvents[eventId].forEach((priority) => {
+                let maxDate = 0;
+                validEvents[eventId].forEach((trieObject) => {
+                    const {priority, date} = trieObject;
                     minPriority = Math.min(minPriority, priority);
+                    maxDate = Math.max(maxDate, date)
                 });
-                finalEvents[eventId] = minPriority;
+                finalEvents[eventId] = {date: maxDate, priority: minPriority};
             }
         });
         return finalEvents;
@@ -170,13 +177,17 @@ class SearchTrie {
                 }
                 entry.events.forEach((indexedEvent) => {
                     const id = indexedEvent.id;
-                    if (node.ends.hasOwnProperty(id)) {
-                        node.ends[id] = Math.max(
-                            node.ends[id],
-                            indexedEvent.priority
-                        )
+                    if (!node.ends.hasOwnProperty(id)) {
+                        node.ends[id] = {priority: 0, date: 0};
                     }
-                    node.ends[id] = indexedEvent.priority;
+                    node.ends[id].priority = Math.max(
+                        node.ends[id].priority,
+                        indexedEvent.priority
+                    );
+                    node.ends[id].date = Math.max(
+                        node.ends[id].date,
+                        indexedEvent.date
+                    );
                 });
             }
         });

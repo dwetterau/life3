@@ -14,7 +14,8 @@ App = React.createClass({
 
     getInitialState() {
         return {
-            maxEventIndex: 10 // Used for infinite scroll
+            maxEventIndex: 10, // Used for infinite scroll
+            eventEditorOpen: false // Used for creating new events
         }
     },
 
@@ -66,7 +67,11 @@ App = React.createClass({
     },
 
     createEventFunc(event) {
-        return Meteor.call("addEvent", event)
+        return Meteor.call("addEvent", event, (error, response) => {
+            if (!error) {
+                this.toggleEventEditor();
+            }
+        })
     },
 
     redirectHome() {
@@ -103,16 +108,47 @@ App = React.createClass({
         window.removeEventListener('scroll', this.handleScroll)
     },
 
-    renderCreateNewEvent() {
-        // If we aren't on our own page and logged in, we can't edit.
-        if (!this.data.isFetchedUser) {
-            return;
-        }
+    toggleEventEditor() {
+        this.setState({eventEditorOpen: !this.state.eventEditorOpen});
+    },
+
+    renderOpenEditorButton() {
+        // If we aren't on our own page and logged in, we can't create a new
+        // event here anyway.
+        if (!this.data.isFetchedUser) return;
+        if (this.state.eventEditorOpen) return;
+        return (
+            <div className="create-new-button"
+                 onClick={this.toggleEventEditor}>
+                <a>Create a new event</a>
+            </div>
+        )
+    },
+
+    renderHeader() {
         return (
             <div className="header-container card">
+                <Search eventsById={this._getEventsById()} />
+                {this.renderOpenEditorButton()}
+            </div>
+        );
+    },
+
+    renderCreateNewEvent() {
+        // If we aren't on our own page and logged in, we can't create a new
+        // event here anyway.
+        if (!this.data.isFetchedUser) return;
+
+        // Don't render this menu if it's not open
+        if (!this.state.eventEditorOpen) return;
+
+        // TODO: Implement a cancel function that will close the editor that
+        // we should pass in here.
+        return (
+            <div className="new-event-container card">
                 <EditEvent event={getEmptyEvent()}
                            isFetchedUser={this.data.isFetchedUser}
-                           createFunc={this.createEventFunc} />
+                           createFunc={this.createEventFunc}/>
             </div>
         );
     },
@@ -202,7 +238,7 @@ App = React.createClass({
         // This is only called if we are querying for the page of a valid user
         return (
             <div className="page-content">
-                <Search eventsById={this._getEventsById()} />
+                {this.renderHeader()}
                 {this.renderCreateNewEvent()}
                 {this.renderEvents()}
             </div>
