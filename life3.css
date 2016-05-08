@@ -467,3 +467,33 @@ div.photo-container.inline25 img {
   height: 0;
   clear: both;
 }
+
+/* CSS for search */
+div.search-container input.search-box {
+  border: none;
+  outline: none;
+  border-bottom: solid 1px rgba(0, 0, 0, .16);
+  width: 100%;
+  margin-bottom: .5em;
+  font-size: 1em;
+}
+
+div.search-result a {
+  display: flex;
+  color: inherit;
+  text-decoration: inherit;
+  font-weight: inherit;
+}
+
+div.search-result div.date {
+  margin-right: .5em;
+  font-style: italic;
+  max-width: 75px;
+  position: absolute;
+}
+
+div.search-result div.title {
+  font-weight: bold;
+  margin-left: 100px;
+}
+/* End of CSS for search */

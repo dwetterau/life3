@@ -71,6 +71,15 @@ const registerRoutes = function() {
             );
         }
     });
+
+    FlowRouter.route("/e/:event", {
+        action(params) {
+            render(
+                <App eventId={params.event} />,
+                document.getElementById("render-target")
+            )
+        }
+    });
 };
 
 if (Meteor.isClient) {

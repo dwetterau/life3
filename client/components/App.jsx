@@ -6,7 +6,8 @@ import _ from "underscore"
 App = React.createClass({
     propTypes: {
         username: React.PropTypes.string,
-        path: React.PropTypes.string
+        path: React.PropTypes.string,
+        eventId: React.PropTypes.string
     },
 
     mixins: [ReactMeteorData],
@@ -40,8 +41,9 @@ App = React.createClass({
                 this.redirectTo404();
             }
         } else {
-            // We're looking at root. If we're logged in, we should redirect
-            if (currentUser) {
+            // We're looking at root. If we're logged in and not looking at an
+            // event, we should redirect.
+            if (!this.props.eventId && currentUser) {
                 this.redirectToUser();
             }
         }
@@ -49,6 +51,8 @@ App = React.createClass({
         let events = [];
         if (fetchedUser) {
             events = Events.find({owner: fetchedUser._id}).fetch()
+        } else if (this.props.eventId) {
+            events = Events.find({_id: this.props.eventId}).fetch()
         } else if (window.location.pathname != "/welcome") {
             // Redirect to welcome if we have nothing else to show.
             // TODO: This doesn't work on mobile either :(
@@ -97,27 +101,6 @@ App = React.createClass({
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll)
-    },
-
-    // Search elements to move later
-    updateQueryText(e) {
-        this.queryText = e.target.value;
-    },
-
-    searchForQuery() {
-        Meteor.call("getEventIds", this.queryText, (error, eventIds) => {
-            // TODO: update some state and render the search results
-            console.log(eventIds);
-        })
-    },
-
-    renderEventSearch() {
-        return (
-            <div className="search-container card">
-                <input className="search-box" onChange={this.updateQueryText} />
-                <button onClick={this.searchForQuery}>Search</button>
-            </div>
-        );
     },
 
     renderCreateNewEvent() {
@@ -184,11 +167,36 @@ App = React.createClass({
         );
     },
 
-    renderPage() {
+    _getEventsById() {
+        const eventsList = this.data.events || [];
+        const eventsById = {};
+        eventsList.forEach((event) => {
+            eventsById[event._id] = event
+        });
+        return eventsById;
+    },
+
+    renderEventPage() {
+        const eventsById = this._getEventsById();
+        if (!eventsById.hasOwnProperty(this.props.eventId)) {
+            return "Loading...";
+        }
+        const event = eventsById[this.props.eventId];
+        return (
+            <div className="timeline-container">
+                <Event key={event._id}
+                       isFetchedUser={this.data.isFetchedUser}
+                       fetchedUser={this.data.fetchedUser}
+                       event={event} />
+            </div>
+        )
+    },
+
+    renderUserPage() {
         // This is only called if we are querying for the page of a valid user
         return (
             <div className="page-content">
-                {this.renderEventSearch()}
+                <Search eventsById={this._getEventsById()} />
                 {this.renderCreateNewEvent()}
                 {this.renderEvents()}
             </div>
@@ -196,6 +204,12 @@ App = React.createClass({
     },
 
     render() {
+        let page;
+        if (this.props.eventId) {
+            page = this.renderEventPage()
+        } else {
+            page = this.data.fetchedUser ? this.renderUserPage() : 'Loading...';
+        }
         return (
             <div className="page-container">
                 <header>
@@ -206,8 +220,7 @@ App = React.createClass({
                         <AccountsUIWrapper />
                     </div>
                 </header>
-
-                {this.data.fetchedUser ? this.renderPage() : 'Loading...'}
+                {page}
             </div>
         );
     }

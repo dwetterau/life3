@@ -191,7 +191,7 @@ class SearchTrie {
             }
             node = node[prefix[i]];
         }
-        return node.ends;
+        return node.ends || {};
     }
 
     removeTokenByEventId(eventId, token) {
