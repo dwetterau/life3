@@ -99,6 +99,27 @@ App = React.createClass({
         window.removeEventListener('scroll', this.handleScroll)
     },
 
+    // Search elements to move later
+    updateQueryText(e) {
+        this.queryText = e.target.value;
+    },
+
+    searchForQuery() {
+        Meteor.call("getEventIds", this.queryText, (error, eventIds) => {
+            // TODO: update some state and render the search results
+            console.log(eventIds);
+        })
+    },
+
+    renderEventSearch() {
+        return (
+            <div className="search-container card">
+                <input className="search-box" onChange={this.updateQueryText} />
+                <button onClick={this.searchForQuery}>Search</button>
+            </div>
+        );
+    },
+
     renderCreateNewEvent() {
         // If we aren't on our own page and logged in, we can't edit.
         if (!this.data.isFetchedUser) {
@@ -167,6 +188,7 @@ App = React.createClass({
         // This is only called if we are querying for the page of a valid user
         return (
             <div className="page-content">
+                {this.renderEventSearch()}
                 {this.renderCreateNewEvent()}
                 {this.renderEvents()}
             </div>
