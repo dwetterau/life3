@@ -11,7 +11,9 @@ Event = React.createClass({
     propTypes: {
         event: React.PropTypes.object.isRequired,
         isFetchedUser: React.PropTypes.bool.isRequired,
-        fetchedUser: React.PropTypes.object.isRequired
+
+        // Only required if we are the fetchedUser
+        fetchedUser: React.PropTypes.object
     },
 
     getInitialState() {

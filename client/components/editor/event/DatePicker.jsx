@@ -39,6 +39,14 @@ DatePicker = React.createClass({
         }
     },
 
+    componentWillReceiveProps(newProps) {
+        const m = moment(newProps.date);
+        this.setState({
+            date: m,
+            dateSuffix: this.getDateSuffixIndex(m.date())
+        })
+    },
+
     getDateSuffixIndex(day) {
         if ((day <= 3 || (day > 20 && day % 10 <= 3)) && (day % 10 > 0)) {
             return (day - 1) % 10;

@@ -182,11 +182,17 @@ App = React.createClass({
             return "Loading...";
         }
         const event = eventsById[this.props.eventId];
+        let isFetchedUser = false;
+        let fetchedUser = null;
+        if (this.data.currentUser && event.owner == this.data.currentUser._id) {
+            isFetchedUser = true;
+            fetchedUser = this.data.currentUser;
+        }
         return (
             <div className="timeline-container">
                 <Event key={event._id}
-                       isFetchedUser={this.data.isFetchedUser}
-                       fetchedUser={this.data.fetchedUser}
+                       isFetchedUser={isFetchedUser}
+                       fetchedUser={fetchedUser}
                        event={event} />
             </div>
         )
