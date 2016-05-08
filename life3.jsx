@@ -3,7 +3,7 @@ import React from "react"
 import {render} from "react-dom"
 
 Events = new Mongo.Collection("events");
-EventsSearchIndex = new Mongo.Collection("events-search-index");
+EventsSearchIndex = new Mongo.Collection("events_search_index");
 
 const registerRoutes = function() {
     FlowRouter.route("/", {
@@ -121,16 +121,22 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         getEventIds(query) {
-            const matchingEventIds = searchService.getEvents(query);
+            const eventIdToPriority = searchService.getEvents(query);
             const events = Events.find({
                 $and: [
-                    {_id: {$in: matchingEventIds}},
+                    {_id: {$in: Object.keys(eventIdToPriority)}},
                     {$or: [
                         {public: true},
                         {owner: this.userId}
                     ]}
                 ]
             }).fetch();
+
+            // sort the output from highest priority to lowest
+            events.sort((a, b) => {
+                return eventIdToPriority[b._id] - eventIdToPriority[a._id];
+            });
+
             return events.map((event) => {
                 return event._id;
             });

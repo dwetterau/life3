@@ -19,7 +19,40 @@ class SearchService {
         this._rebuildTrie();
     }
 
+    static _tokenizeString(string) {
+        return string
+            .replace(/[^A-Za-z0-9\s]/g,"")
+            .replace(/\s{2,}/g, " ")
+            .split(/\s+/);
+    }
+
+    _insertToken(event, token, priority) {
+        token = token.toLowerCase();
+
+        // Update our mapping that we need when updating events.
+        if (!this.eventIdToTokens.hasOwnProperty(event._id)) {
+            this.eventIdToTokens[event._id] = {}
+        }
+        this.eventIdToTokens[event._id][token] = true;
+
+        // TODO: Insert each prefix of a token into this and then
+        // user the real FT search index on this thing.
+        this.EventsSearchIndex.upsert(
+            {token: token},
+            {$addToSet: {events: {id: event._id, priority: priority}}}
+        );
+    }
+
     _insertEvent(event) {
+        if (event.hasOwnProperty("title")) {
+            const titleTokens = SearchService._tokenizeString(
+                event.title.trim());
+            titleTokens.forEach((token) => {
+                this._insertToken(event, token, 2);
+            })
+        }
+
+
         if (!event.hasOwnProperty("contents") || ! event.contents.length) {
             return;
         }
@@ -38,26 +71,10 @@ class SearchService {
         allText = allText.trim();
         if (allText) {
             // Yay there's some text to insert for this event
-            allText = allText
-                .replace(/[^A-Za-z0-9\s]/g,"")
-                .replace(/\s{2,}/g, " ")
-                .split(/\s+/);
+            allText = SearchService._tokenizeString(allText);
             // Now insert into our lovely index!
             allText.forEach((token) => {
-                token = token.toLowerCase();
-
-                // Update our mapping that we need when updating events.
-                if (!this.eventIdToTokens.hasOwnProperty(event._id)) {
-                    this.eventIdToTokens[event._id] = {}
-                }
-                this.eventIdToTokens[event._id][token] = true;
-
-                // TODO: Insert each prefix of a token into this and then
-                // user the real FT search index on this thing.
-                this.EventsSearchIndex.upsert(
-                    {token: token},
-                    {$addToSet: {events: event._id}}
-                );
+                this._insertToken(event, token, 1);
             });
         }
     }
@@ -70,7 +87,7 @@ class SearchService {
         const oldTokens = Object.keys(this.eventIdToTokens[eventId]);
         this.EventsSearchIndex.update(
             {token: {$in: oldTokens}},
-            {$pull: {events: eventId}}
+            {$pull: {events: {id: eventId}}}
         );
         delete this.eventIdToTokens[eventId];
     }
@@ -107,21 +124,29 @@ class SearchService {
         tokens.forEach((token) => {
             token = token.toLowerCase();
             let events = this.trie.getEvents(token);
-            events.forEach((eventId) => {
+            Object.keys(events).forEach((eventId) => {
+                const priority = events[eventId];
                 if (!validEvents.hasOwnProperty(eventId)) {
-                    validEvents[eventId] = 0;
+                    validEvents[eventId] = [];
                 }
-                validEvents[eventId] += 1;
+                validEvents[eventId].push(priority);
             })
         });
 
         const finalEvents = {};
         Object.keys(validEvents).forEach((eventId) => {
-            if (validEvents[eventId] == tokens.length) {
-                finalEvents[eventId] = true;
+            if (validEvents[eventId].length == tokens.length) {
+                // We min the priorities together at the end because if any are
+                // lower than the others, then the entire qurey must not be at
+                // the highest priority level
+                let minPriority = 10;
+                validEvents[eventId].forEach((priority) => {
+                    minPriority = Math.min(minPriority, priority);
+                });
+                finalEvents[eventId] = minPriority;
             }
         });
-        return Object.keys(finalEvents);
+        return finalEvents;
     }
 }
 
@@ -143,8 +168,15 @@ class SearchTrie {
                 if (!node.hasOwnProperty("ends")) {
                     node.ends = {}
                 }
-                entry.events.forEach((eventId) => {
-                    node.ends[eventId] = true
+                entry.events.forEach((indexedEvent) => {
+                    const id = indexedEvent.id;
+                    if (node.ends.hasOwnProperty(id)) {
+                        node.ends[id] = Math.max(
+                            node.ends[id],
+                            indexedEvent.priority
+                        )
+                    }
+                    node.ends[id] = indexedEvent.priority;
                 });
             }
         });
@@ -159,7 +191,24 @@ class SearchTrie {
             }
             node = node[prefix[i]];
         }
-        return Object.keys(node.ends);
+        return node.ends;
+    }
+
+    removeTokenByEventId(eventId, token) {
+        // Note: untested
+        let i = 0;
+        let node = this.root;
+        for (; i < token.length; i++) {
+            node = node[token[i]];
+            if (Object.keys(node.ends).length == 1) {
+                // Only one word down this path
+                if (i == token.length - 1) {
+                    // The last character in the word
+                    delete this.wordIndex[token];
+                }
+            }
+            delete node.ends[eventId];
+        }
     }
 }
 
