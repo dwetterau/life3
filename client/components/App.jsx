@@ -74,6 +74,10 @@ App = React.createClass({
         })
     },
 
+    cancelEventCreationFunc() {
+        this.toggleEventEditor()
+    },
+
     redirectHome() {
         window.location = "/";
     },
@@ -148,7 +152,8 @@ App = React.createClass({
             <div className="new-event-container card">
                 <EditEvent event={getEmptyEvent()}
                            isFetchedUser={this.data.isFetchedUser}
-                           createFunc={this.createEventFunc}/>
+                           createFunc={this.createEventFunc}
+                           cancelFunc={this.cancelEventCreationFunc} />
             </div>
         );
     },

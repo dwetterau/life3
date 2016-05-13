@@ -17,7 +17,16 @@ Event = React.createClass({
     },
 
     getInitialState() {
+        return this._getNewStateFromProps(this.props);
+    },
+
+    componentWillReceiveProps(newProps) {
+        this.setState(this._getNewStateFromProps(newProps))
+    },
+
+    _getNewStateFromProps(props) {
         return {
+            event: props.event,
             inEditMode: false
         }
     },
@@ -27,12 +36,18 @@ Event = React.createClass({
     },
 
     updateEvent(eventId, newEvent) {
-        Meteor.call("updateEvent", eventId, newEvent);
+        Meteor.call("updateEvent", eventId, newEvent, (error, updatedEvent) => {
+            this.setState({event: updatedEvent})
+        });
         this.toggleEditMode();
     },
 
     deleteEvent() {
-        Meteor.call("deleteEvent", this.props.event._id);
+        Meteor.call("deleteEvent", this.state.event._id);
+    },
+
+    cancelEventEdit() {
+        this.toggleEditMode();
     },
 
     renderOptions() {
@@ -40,7 +55,8 @@ Event = React.createClass({
                              editing={this.state.inEditMode}
                              isFetchedUser={this.props.isFetchedUser}
                              saveOrEditFunc={this.toggleEditMode}
-                             deleteFunc={this.deleteEvent} />
+                             deleteFunc={this.deleteEvent}
+                             cancelFunc={this.cancelEventEdit} />
     },
 
     renderContent(content, index) {
@@ -55,7 +71,7 @@ Event = React.createClass({
     },
 
     renderEventContents() {
-        const eventContents = this.props.event.contents || [];
+        const eventContents = this.state.event.contents || [];
         return (
             <div className="event-contents">
                 {eventContents.map(this.renderContent)}
@@ -67,8 +83,8 @@ Event = React.createClass({
         // On show the sharing path if we're the current user
         if (!this.props.isFetchedUser) return;
         let path = "/";
-        if (this.props.event.hasOwnProperty("path")) {
-            path = this.props.event.path;
+        if (this.state.event.hasOwnProperty("path")) {
+            path = this.state.event.path;
         }
         if (path == "/") return;
         path = "/u/" + encodeURI(this.props.fetchedUser.username) + path;
@@ -82,14 +98,14 @@ Event = React.createClass({
     },
 
     renderEventBody() {
-        const formattedDate = moment(this.props.event.startTime).format("ll");
+        const formattedDate = moment(this.state.event.startTime).format("ll");
         return (
             <div className="event-body">
                 <div className="event-header">
                     <div className="event-date">{formattedDate}</div>
                     <div className="event-title">
                         <DraftEditor
-                            text={this.props.event.title}
+                            text={this.state.event.title}
                             readOnly={true}
                             showOptions={false}
                             onTextChange={(x) => {}} />
@@ -111,10 +127,11 @@ Event = React.createClass({
             )
         } else {
             return (
-                <EditEvent event={this.props.event}
+                <EditEvent event={this.state.event}
                            isFetchedUser={this.props.isFetchedUser}
                            updateFunc={this.updateEvent}
-                           deleteFunc={this.deleteEvent} />
+                           deleteFunc={this.deleteEvent}
+                           cancelFunc={this.cancelEventEdit} />
             )
         }
     },

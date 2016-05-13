@@ -15,7 +15,10 @@ EventOptions = React.createClass({
         saveOrEditFunc: React.PropTypes.func.isRequired,
 
         // The function to call when the delete button is clicked on
-        deleteFunc: React.PropTypes.func.isRequired
+        deleteFunc: React.PropTypes.func.isRequired,
+
+        // The function to call when teh cancel button is clicked on
+        cancelFunc: React.PropTypes.func.isRequired
     },
 
     getInitialState() {
@@ -59,6 +62,13 @@ EventOptions = React.createClass({
                   onClick={this.props.deleteFunc}>delete</a>
     },
 
+    renderEventOptionCancel() {
+        // If we aren't editing, there's nothing to cancel
+        if (!this.props.editing) return;
+        return <a className="event-option -cancel"
+                  onClick={this.props.cancelFunc}>cancel</a>
+    },
+
     renderOptions() {
         // If the menu isn't expanded, don't show it
         if (!this.state.expanded) {
@@ -68,6 +78,7 @@ EventOptions = React.createClass({
             <div className="event-options-list">
                 {this.renderEventOptionEdit()}
                 {this.renderEventOptionDelete()}
+                {this.renderEventOptionCancel()}
             </div>
         )
     },

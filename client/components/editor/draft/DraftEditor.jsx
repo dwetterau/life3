@@ -96,7 +96,9 @@ DraftEditor = React.createClass({
     },
 
     componentWillReceiveProps(newProps) {
-        if (!newProps.text && this.props.text) {
+        // We don't always want to re-initialize the editor. We make an
+        // exception if we're in readOnly mode however.
+        if ((!newProps.text && this.props.text) || newProps.readOnly) {
             const editorState = this.getInitialEditorState(newProps.text);
             this.onChange(editorState);
             this.initializeEditor(newProps, editorState);

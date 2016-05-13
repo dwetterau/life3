@@ -24,6 +24,9 @@ EditEvent = React.createClass({
         // The function to call to create the event
         createFunc: React.PropTypes.func,
 
+        // The function to call to cancel editing the event
+        cancelFunc: React.PropTypes.func,
+
         // The function to call to update the event
         updateFunc: React.PropTypes.func,
 
@@ -32,9 +35,19 @@ EditEvent = React.createClass({
     },
 
     getInitialState() {
+        return this._getNewStateFromProps(this.props)
+    },
+
+    componentWillReceiveProps(newProps) {
+        this.setState(this._getNewStateFromProps(newProps))
+    },
+
+    _getNewStateFromProps(props) {
+        let clonedEvent = JSON.parse(JSON.stringify(props.event));
+        clonedEvent.startTime = new Date(clonedEvent.startTime);
         return {
-            event: this.props.event,
-            creating: !this.props.event._id
+            event: clonedEvent,
+            creating: !props.event._id
         }
     },
 
@@ -76,8 +89,6 @@ EditEvent = React.createClass({
             this.state.event.contents.push(getEmptyBudgetContent());
         } else if (contentType == contentTypes.checklist) {
             this.state.event.contents.push(getEmptyChecklistContent());
-        } else if (contentType == contentTypes.photo) {
-            this.state.event.contents.push(getEmptyPhotoContent());
         }
         this.setState({event: this.state.event});
     },
@@ -120,7 +131,8 @@ EditEvent = React.createClass({
                              editing={true}
                              isFetchedUser={this.props.isFetchedUser}
                              saveOrEditFunc={saveOrEdit}
-                             deleteFunc={deleteFunc} />
+                             deleteFunc={deleteFunc}
+                             cancelFunc={this.props.cancelFunc} />
     },
 
     renderDatePicker() {

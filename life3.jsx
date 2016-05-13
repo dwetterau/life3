@@ -197,6 +197,7 @@ Meteor.methods({
         // Set the eventId back on the event for the search infra.
         event._id = eventId;
         indexEvent(event);
+        return event;
     },
 
     deleteEvent(eventId) {

@@ -507,7 +507,7 @@ div.search-result a {
 div.search-result div.date {
   margin-right: .5em;
   font-style: italic;
-  max-width: 75px;
+  max-width: 100px;
   position: absolute;
 }
 
