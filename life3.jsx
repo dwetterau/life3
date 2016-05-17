@@ -80,6 +80,12 @@ const registerRoutes = function() {
             )
         }
     });
+
+    FlowRouter.route("/:anything_else", {
+        triggersEnter: [function(context, redirect) {
+            redirect("/404");
+        }]
+    });
 };
 
 if (Meteor.isClient) {
