@@ -79,27 +79,51 @@ Checklist = React.createClass({
         this.handleContentUpdate(itemRows);
     },
 
-    handleReturn() {
-        this.handleAddItemRow();
+    _focusNextEditor(index) {
+        this.blurEditor(index);
+        this.focusEditor(index + 1);
+        this.handleTextBoxFocus(index + 1);
+    },
+
+    handleReturn(index, e) {
+        if (index + 1 == this.state.itemRows.length) {
+            this.handleAddItemRow();
+            setTimeout(this._focusNextEditor.bind(this, index), 0);
+        } else {
+            this._focusNextEditor(index)
+        }
 
         // We don't want Draft to do anything with this event.
         this.forceUpdate();
         return true;
     },
 
-    handleTextBoxFocus() {
-        // We want to swap the editor into editable-only mode.
-        this.props.blockProps.setEditable(false);
-        if (this.refs.editor !== undefined) {
-            this.refs.editor.focus();
+    _getCurrentEditor(index) {
+        return this.refs["editor_" + index]
+    },
+
+    focusEditor(index) {
+        const curEditor = this._getCurrentEditor(index);
+        if (curEditor !== undefined) {
+            curEditor.focus();
         }
     },
 
-    handleTextBoxBlur() {
-        // We're losing focus anyway, don't have to do anything special
-        if (this.refs.editor !== undefined) {
-            this.refs.editor.blur();
+    blurEditor(index) {
+        const curEditor = this._getCurrentEditor(index);
+        if (curEditor !== undefined) {
+            curEditor.blur();
         }
+    },
+
+    handleTextBoxFocus(index) {
+        // We want to swap the editor into editable-only mode.
+        this.props.blockProps.setEditable(false);
+        this.focusEditor(index);
+    },
+
+    handleTextBoxBlur() {
+        // We're losing focus so switch the outer editor back
         this.props.blockProps.setEditable(true);
     },
 
@@ -112,9 +136,9 @@ Checklist = React.createClass({
                                 this, index)} />
                 </div>
                 <div className="checklist-description-container"
-                     onClick={this.handleTextBoxFocus}
-                     onBlur={this.handleTextBoxBlur}>
-                    <DraftEditor ref="editor"
+                     onBlur={this.handleTextBoxBlur}
+                     onClick={this.handleTextBoxFocus.bind(this, index)} >
+                    <DraftEditor ref={"editor_" + index}
                                  text={row.description}
                                  readOnly={false}
                                  onTextChange={
@@ -123,7 +147,8 @@ Checklist = React.createClass({
                                  )}
                                  showOptions={false}
                                  placeholder="Description"
-                                 handleReturn={this.handleReturn} />
+                                 handleReturn={
+                                    this.handleReturn.bind(this, index)} />
                </div>
                 <div className="checklist-item-row-delete-button"
                      onClick={this.handleDeleteItemRow.bind(
@@ -141,8 +166,10 @@ Checklist = React.createClass({
                 this.renderCreateChecklistRow);
         }
         return (
-            <div className="checklist-items">
-                {itemRows}
+            <div className="checklist-content-editor">
+                <div className="checklist-items">
+                    {itemRows}
+                </div>
             </div>
         )
     },
@@ -179,16 +206,10 @@ Checklist = React.createClass({
     },
 
     render() {
-        let content;
         if (this.props.blockProps.readOnly) {
-            content = this.renderReadOnlyView();
+            return this.renderReadOnlyView();
         } else {
-            content = (
-                <div className="checklist-content-editor">
-                    {this.renderCreateChecklistTable()}
-                </div>
-            );
+            return this.renderCreateChecklistTable();
         }
-        return content;
     }
 });

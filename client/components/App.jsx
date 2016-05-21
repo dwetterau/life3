@@ -83,10 +83,13 @@ App = React.createClass({
     },
 
     redirectTo404: _.debounce(function() {
+        // TODO: do something smarter here where we check that we've fully
+        // published the users dict and the user in question still doesn't
+        // exist.
         if (!this.data.fetchedUser) {
             window.location = "/404"
         }
-    }, 500),
+    }, 2000),
 
     redirectToUser() {
         window.location = "/u/" + encodeURIComponent(Meteor.user().username)
@@ -99,7 +102,7 @@ App = React.createClass({
     handleScroll(event) {
         // Near the bottom
         const ele = event.target.scrollingElement;
-        if (ele.scrollTop + $(window).height() > ele.scrollHeight - 50) {
+        if (ele.scrollTop + $(window).height() > ele.scrollHeight - 75) {
             this.debouncedExtendEvents();
         }
     },

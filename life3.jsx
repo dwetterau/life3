@@ -81,13 +81,11 @@ const registerRoutes = function() {
         }
     });
 
-    /* Not sure why but this is breaking prod I think
     FlowRouter.route("/:anything_else", {
         triggersEnter: [function(context, redirect) {
             redirect("/404");
         }]
     });
-    */
 };
 
 if (Meteor.isClient) {
