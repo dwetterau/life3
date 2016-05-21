@@ -16,7 +16,9 @@ DraftEditor = React.createClass({
 
         initialOptions: React.PropTypes.object,
 
-        placeholder: React.PropTypes.string
+        placeholder: React.PropTypes.string,
+
+        handleReturn: React.PropTypes.func
     },
 
     getInitialState() {
@@ -26,7 +28,8 @@ DraftEditor = React.createClass({
             editorState,
             // State for link editing
             editingLink: false,
-            urlValue: ''
+            urlValue: '',
+            tempReadOnly: false
         };
     },
 
@@ -105,11 +108,35 @@ DraftEditor = React.createClass({
         }
     },
 
-    onChange(editorState) {
+    // External API
+    focus() {
+        this.refs.editor.focus();
+    },
+
+    blur() {
+        this.refs.editor.blur();
+    },
+
+    onChange(editorState, otherState) {
+        if (!otherState) {
+            otherState = {}
+        }
+
         const contentState = editorState.getCurrentContent();
         const rawContent = DraftJS.convertToRaw(contentState);
         this.props.onTextChange(rawContent);
-        this.setState({editorState})
+
+        // Add the editor state to the rest of the state and set it.
+        otherState.editorState = editorState;
+        this.setState(otherState)
+    },
+
+    setEditable(newValue) {
+        // Sets an override. Invalid if we're permanently readOnly
+        if (this.props.readOnly) {
+            return
+        }
+        this.setState({tempReadOnly: !newValue});
     },
 
     // Editor buttons
@@ -208,22 +235,24 @@ DraftEditor = React.createClass({
     },
 
     createNewLink() {
-        const entityKey = DraftJS.Entity.create('LINK', 'MUTABLE', {
+        const entityKey = DraftJS.Entity.create('LINK', 'IMMUTABLE', {
             url: this.state.urlValue});
-        this.setState({
-            editorState: DraftJS.RichUtils.toggleLink(
+        this.onChange(
+            DraftJS.RichUtils.toggleLink(
                 this.state.editorState,
                 this.state.editorState.getSelection(),
                 entityKey
             ),
-            editingLink: false,
-            urlValue: '',
-            createFunc: null
-        })
+            {
+                editingLink: false,
+                urlValue: '',
+                createFunc: null
+            }
+        );
     },
 
     createImageBlock() {
-        const entityKey = DraftJS.Entity.create('image', 'MUTABLE', {
+        const entityKey = DraftJS.Entity.create('image', 'IMMUTABLE', {
             src: this.state.urlValue,
             viewMode: "default"
         });
@@ -233,12 +262,24 @@ DraftEditor = React.createClass({
             entityKey,
             ' '
         );
-        this.setState({
-            editorState: editorState,
+        this.onChange(editorState, {
             editingLink: false,
             urlValue: '',
             createFunc: null
         })
+    },
+
+    createChecklistBlock() {
+        const entityKey = DraftJS.Entity.create('checklist', 'IMMUTABLE',
+            getEmptyChecklistContent()
+        );
+
+        const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
+            this.state.editorState,
+            entityKey,
+            ' '
+        );
+        this.onChange(editorState);
     },
 
     renderLinkPrompt() {
@@ -282,6 +323,17 @@ DraftEditor = React.createClass({
         )
     },
 
+    renderChecklistButton() {
+        return (
+            <div className="checklist-button-container">
+                <div className="checklist-button"
+                     onClick={this.createChecklistBlock} >
+                    Checklist
+                </div>
+            </div>
+        )
+    },
+
     renderEditorButtons() {
         if (this.props.readOnly || !this.props.showOptions) {
             return;
@@ -292,19 +344,33 @@ DraftEditor = React.createClass({
                 {this.renderBlockButtons()}
                 {this.renderLinkButton()}
                 {this.renderImageButton()}
+                {this.renderChecklistButton()}
             </div>
         )
     },
 
     mediaBlockRenderer(block) {
         if (block.getType() === 'atomic') {
-            return {
-                component: Media,
-                editable: false,
-                props: {
-                    readOnly: this.props.readOnly
+            const entityType = DraftJS.Entity.get(block.getEntityAt(0))
+                .getType();
+            if (entityType == "image") {
+                return {
+                    component: Media,
+                    editable: false,
+                    props: {
+                        readOnly: this.props.readOnly
+                    }
+                };
+            } else if (entityType == "checklist") {
+                return {
+                    component: Checklist,
+                    editable: false,
+                    props: {
+                        readOnly: this.props.readOnly,
+                        setEditable: this.setEditable
+                    }
                 }
-            };
+            }
         }
     },
 
@@ -329,11 +395,13 @@ DraftEditor = React.createClass({
                 {this.renderEditorButtons()}
                 {this.renderLinkPrompt()}
                 <DraftJS.Editor
+                    ref="editor"
                     blockRendererFn={this.mediaBlockRenderer}
                     editorState={editorState}
-                    readOnly={this.props.readOnly}
+                    readOnly={this.props.readOnly || this.state.tempReadOnly}
                     onChange={this.onChange}
-                    placeholder={this.props.placeholder} />
+                    placeholder={this.props.placeholder}
+                    handleReturn={this.props.handleReturn} />
             </div>
         );
     }
