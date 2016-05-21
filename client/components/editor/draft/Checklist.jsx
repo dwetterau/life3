@@ -23,11 +23,15 @@ Checklist = React.createClass({
     },
 
     componentWillReceiveProps(newProps) {
-        this.setState(this._getStateFromProps(newProps))
+        if (this.props.blockProps.readOnly) {
+            // Only regen based on props if we are in readOnly mode.
+            this.setState(this._getStateFromProps(newProps))
+        }
     },
 
     _getStateFromProps(props) {
         const data = Entity.get(props.block.getEntityAt(0)).getData();
+        this._id = data._id;
         return {
             itemRows: data.itemRows
         }
@@ -49,8 +53,10 @@ Checklist = React.createClass({
 
     handleContentUpdate(newItemRows) {
         const entityKey = this.props.block.getEntityAt(0);
-        Entity.mergeData(entityKey, {itemRows: newItemRows});
-        this.forceUpdate();
+        Entity.replaceData(entityKey, {
+            _id: this._id,
+            itemRows: newItemRows
+        });
     },
 
     handleItemRowDescriptionChange(rowIndex, rawContent) {
@@ -71,12 +77,14 @@ Checklist = React.createClass({
         const itemRows = this.state.itemRows;
         itemRows.splice(rowIndex, 1);
         this.handleContentUpdate(itemRows);
+        this.forceUpdate();
     },
 
     handleAddItemRow() {
         const itemRows = this.state.itemRows || [];
         itemRows.push(getEmptyChecklistItemRow());
         this.handleContentUpdate(itemRows);
+        this.forceUpdate();
     },
 
     _focusNextEditor(index) {
@@ -96,6 +104,21 @@ Checklist = React.createClass({
         // We don't want Draft to do anything with this event.
         this.forceUpdate();
         return true;
+    },
+
+    handleBackspace(index) {
+        if (this.state.itemRows[index].description == "") {
+            // The current row is empty and we pressed backspace again, delete
+            // this index now.
+            console.log(index);
+            if (index > 0) {
+                this.handleDeleteItemRow(index);
+                setTimeout(() => {
+                   this.focusEditor(index - 1);
+                   this.handleTextBoxFocus(index - 1)
+                }, 0);
+            }
+        }
     },
 
     _getCurrentEditor(index) {
@@ -148,13 +171,13 @@ Checklist = React.createClass({
                                  showOptions={false}
                                  placeholder="Description"
                                  handleReturn={
-                                    this.handleReturn.bind(this, index)} />
+                                    this.handleReturn.bind(this, index)
+                                 }
+                                 handleBackspace={
+                                    this.handleBackspace.bind(this, index)
+                                 }
+                    />
                </div>
-                <div className="checklist-item-row-delete-button"
-                     onClick={this.handleDeleteItemRow.bind(
-                        this, index)}>
-                    x
-                </div>
             </div>
         );
     },

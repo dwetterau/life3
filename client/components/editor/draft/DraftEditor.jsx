@@ -18,7 +18,9 @@ DraftEditor = React.createClass({
 
         placeholder: React.PropTypes.string,
 
-        handleReturn: React.PropTypes.func
+        handleReturn: React.PropTypes.func,
+
+        handleBackspace: React.PropTypes.func
     },
 
     getInitialState() {
@@ -234,6 +236,16 @@ DraftEditor = React.createClass({
         }
     },
 
+    handleKeyCommand(command) {
+        if (command === 'backspace') {
+            if (this.props.handleBackspace !== undefined) {
+                this.props.handleBackspace();
+            }
+        }
+        // Allow this to propagate.
+        return false;
+    },
+
     createNewLink() {
         const entityKey = DraftJS.Entity.create('LINK', 'IMMUTABLE', {
             url: this.state.urlValue});
@@ -401,7 +413,8 @@ DraftEditor = React.createClass({
                     readOnly={this.props.readOnly || this.state.tempReadOnly}
                     onChange={this.onChange}
                     placeholder={this.props.placeholder}
-                    handleReturn={this.props.handleReturn} />
+                    handleReturn={this.props.handleReturn}
+                    handleKeyCommand={this.handleKeyCommand} />
             </div>
         );
     }
