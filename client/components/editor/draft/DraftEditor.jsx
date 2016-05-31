@@ -141,6 +141,12 @@ DraftEditor = React.createClass({
         this.setState({tempReadOnly: !newValue});
     },
 
+    forceStateUpdate() {
+        // Should be called when an underlying component modifies its state to
+        // ensure that the encapsulating editor picks up the changes
+        this.onChange(this.state.editorState);
+    },
+
     // Editor buttons
     // Inline styles
     inlineStyleOptions: [
@@ -264,10 +270,14 @@ DraftEditor = React.createClass({
     },
 
     createImageBlock() {
-        const entityKey = DraftJS.Entity.create('image', 'IMMUTABLE', {
-            src: this.state.urlValue,
-            viewMode: "default"
-        });
+        const entityKey = DraftJS.Entity.create(
+            'image',
+            'IMMUTABLE',
+            {
+                src: this.state.urlValue,
+                viewMode: "default"
+            }
+        );
 
         const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
             this.state.editorState,
@@ -282,8 +292,25 @@ DraftEditor = React.createClass({
     },
 
     createChecklistBlock() {
-        const entityKey = DraftJS.Entity.create('checklist', 'IMMUTABLE',
+        const entityKey = DraftJS.Entity.create(
+            'checklist',
+            'IMMUTABLE',
             getEmptyChecklistContent()
+        );
+
+        const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
+            this.state.editorState,
+            entityKey,
+            ' '
+        );
+        this.onChange(editorState);
+    },
+
+    createBudgetBlock() {
+        const entityKey = DraftJS.Entity.create(
+            'budget',
+            'MUTABLE',
+            getEmptyBudgetContent()
         );
 
         const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
@@ -346,6 +373,17 @@ DraftEditor = React.createClass({
         )
     },
 
+    renderBudgetButton() {
+        return (
+            <div className="budget-button-container">
+                <div className="budget-button"
+                     onClick={this.createBudgetBlock} >
+                    Budget
+                </div>
+            </div>
+        )
+    },
+
     renderEditorButtons() {
         if (this.props.readOnly || !this.props.showOptions) {
             return;
@@ -357,6 +395,7 @@ DraftEditor = React.createClass({
                 {this.renderLinkButton()}
                 {this.renderImageButton()}
                 {this.renderChecklistButton()}
+                {this.renderBudgetButton()}
             </div>
         )
     },
@@ -379,7 +418,18 @@ DraftEditor = React.createClass({
                     editable: false,
                     props: {
                         readOnly: this.props.readOnly,
-                        setEditable: this.setEditable
+                        setEditable: this.setEditable,
+                        forceStateUpdate: this.forceStateUpdate
+                    }
+                }
+            } else if (entityType == "budget") {
+                return {
+                    component: Budget,
+                    editable: false,
+                    props: {
+                        readOnly: this.props.readOnly,
+                        setEditable: this.setEditable,
+                        forceStateUpdate: this.forceStateUpdate
                     }
                 }
             }

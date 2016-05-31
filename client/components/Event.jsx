@@ -4,7 +4,6 @@ import React from "react"
 contentTypes = {
     text: "text",
     budget: "budget",
-    checklist: "checklist"
 };
 
 Event = React.createClass({
@@ -65,8 +64,6 @@ Event = React.createClass({
             return <RenderedTextContent key={index} content={content} />
         } else if (content.type == contentTypes.budget) {
             return <RenderedBudgetContent key={index} content={content} />
-        } else if (content.type == contentTypes.checklist) {
-            return <RenderedChecklistContent key={index} content={content} />
         }
     },
 

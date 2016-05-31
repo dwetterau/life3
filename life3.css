@@ -353,6 +353,27 @@ div.event-header div.event-date {
   font-style: italic;
 }
 
+/* Budget CSS */
+table.budget-items {
+  width: 100%;
+}
+
+table.budget-items td:first-child {
+  width: 75%;
+}
+
+table.budget-items td input {
+  margin: 0 0 0 1em;
+  padding: 0;
+  height: 22px;
+}
+
+div.budget-description-container div.public-DraftEditor-content {
+  min-height: 0;
+  margin: 0;
+}
+
+
 div.event-budget-item-rows {
   border-bottom: 1px solid rgba(0, 0, 0, .16);
 }
@@ -389,6 +410,8 @@ div.budget-value {
 div.budget-value.-negative {
   color: #e74c3c;
 }
+
+/* End of Budget CSS */
 
 div.date-picker {
   margin-bottom: .5em;

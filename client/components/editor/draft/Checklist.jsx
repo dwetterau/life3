@@ -32,6 +32,14 @@ Checklist = React.createClass({
     _getStateFromProps(props) {
         const data = Entity.get(props.block.getEntityAt(0)).getData();
         this._id = data._id;
+        let itemRows = data.itemRows.map(function(itemRow) {
+            return {
+                _id: itemRow._id,
+                description: itemRow.description,
+                done: itemRow.done
+            }
+        });
+
         return {
             itemRows: data.itemRows
         }
@@ -57,6 +65,8 @@ Checklist = React.createClass({
             _id: this._id,
             itemRows: newItemRows
         });
+        this.setState({itemRows: newItemRows});
+        this.props.blockProps.forceStateUpdate();
     },
 
     handleItemRowDescriptionChange(rowIndex, rawContent) {
@@ -110,7 +120,6 @@ Checklist = React.createClass({
         if (this.state.itemRows[index].description == "") {
             // The current row is empty and we pressed backspace again, delete
             // this index now.
-            console.log(index);
             if (index > 0) {
                 this.handleDeleteItemRow(index);
                 setTimeout(() => {
