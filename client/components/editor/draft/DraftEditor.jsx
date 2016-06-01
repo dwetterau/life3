@@ -1,4 +1,5 @@
 import DraftJS from "draft-js"
+import Immutable from "immutable";
 import React from "react";
 
 DraftEditor = React.createClass({
@@ -436,6 +437,17 @@ DraftEditor = React.createClass({
         }
     },
 
+    // TODO: See if we can remove this hack. See draft-js #395
+    // Include 'paragraph' as a valid block and updated the unstyled element but
+    // keep support for other draft default block types
+    extendedBlockRenderMap: DraftJS.DefaultDraftBlockRenderMap.merge(
+        Immutable.Map({
+            'paragraph': {
+                element: 'div'
+            }
+        })
+    ),
+
     render() {
         // If the user changes block type before entering any text, we can
         // either style the placeholder or hide it. Let's just hide it now.
@@ -459,6 +471,7 @@ DraftEditor = React.createClass({
                 <DraftJS.Editor
                     ref="editor"
                     blockRendererFn={this.mediaBlockRenderer}
+                    blockRenderMap={this.extendedBlockRenderMap}
                     editorState={editorState}
                     readOnly={this.props.readOnly || this.state.tempReadOnly}
                     onChange={this.onChange}
