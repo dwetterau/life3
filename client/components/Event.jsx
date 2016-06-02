@@ -1,11 +1,6 @@
 import moment from "moment"
 import React from "react"
 
-contentTypes = {
-    text: "text",
-    budget: "budget",
-};
-
 Event = React.createClass({
     propTypes: {
         event: React.PropTypes.object.isRequired,
@@ -58,20 +53,10 @@ Event = React.createClass({
                              cancelFunc={this.cancelEventEdit} />
     },
 
-    renderContent(content, index) {
-        // TODO: should these be using the content's id instead of index?
-        if (content.type == contentTypes.text) {
-            return <RenderedTextContent key={index} content={content} />
-        } else if (content.type == contentTypes.budget) {
-            return <RenderedBudgetContent key={index} content={content} />
-        }
-    },
-
-    renderEventContents() {
-        const eventContents = this.state.event.contents || [];
+    renderEventContent() {
         return (
             <div className="event-contents">
-                {eventContents.map(this.renderContent)}
+                <RenderedTextContent content={this.state.event.contents[0]} />
             </div>
         )
     },
@@ -108,7 +93,7 @@ Event = React.createClass({
                             onTextChange={(x) => {}} />
                     </div>
                 </div>
-                {this.renderEventContents()}
+                {this.renderEventContent()}
                 {this.renderEventPath()}
             </div>
         )

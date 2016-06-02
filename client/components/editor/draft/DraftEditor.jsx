@@ -310,7 +310,7 @@ DraftEditor = React.createClass({
     createBudgetBlock() {
         const entityKey = DraftJS.Entity.create(
             'budget',
-            'MUTABLE',
+            'IMMUTABLE',
             getEmptyBudgetContent()
         );
 

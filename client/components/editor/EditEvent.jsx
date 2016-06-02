@@ -5,9 +5,9 @@ getEmptyEvent = () => {
     return {
         startTime: new Date(),
         title: "",
-        contents: [
-            getEmptyTextContent()
-        ],
+        contents: [{
+            description: ""
+        }],
         public: false,
         path: "/"
     };
@@ -72,22 +72,8 @@ EditEvent = React.createClass({
         this.setState({event: this.state.event})
     },
 
-    handleContentChange(index, newContent) {
-        this.state.event.contents[index] = newContent;
-        this.setState({event: this.state.event});
-    },
-
-    handleDeleteContent(index) {
-        this.state.event.contents.splice(index, 1);
-        this.setState({event: this.state.event});
-    },
-
-    selectNewContentType(contentType) {
-        if (contentType == contentTypes.text) {
-            this.state.event.contents.push(getEmptyTextContent());
-        } else if (contentType == contentTypes.budget) {
-            this.state.event.contents.push(getEmptyBudgetContent());
-        }
+    handleContentChange(newContent) {
+        this.state.event.contents[0] = newContent;
         this.setState({event: this.state.event});
     },
 
@@ -152,40 +138,11 @@ EditEvent = React.createClass({
         )
     },
 
-    renderContentEditors() {
+    renderContentEditor() {
         return (
             <div className="event-content-editors-container">
-                {this.state.event.contents.map(function(content, index) {
-                    return <EditContent
-                        key={content._id}
-                        content={content}
-                        updateContent={
-                            this.handleContentChange.bind(this, index)
-                        }
-                        deleteContent={
-                            this.handleDeleteContent.bind(this, index)
-                        }
-                    />
-                }.bind(this))}
-            </div>
-        )
-    },
-
-    renderEditorContentSelectorTile(type) {
-        const className = "editor-selector-tile -" + type;
-        return (
-            <div key={type} className={className}
-                 onClick={this.selectNewContentType.bind(this, type)}>
-                {type[0].toUpperCase() + type.substr(1)}
-            </div>
-        )
-    },
-
-    renderEditorContentSelector() {
-        return (
-            <div className="editor-selector-container">
-                {Object.keys(contentTypes).map(
-                    this.renderEditorContentSelectorTile)}
+                <EditContent content={this.state.event.contents[0]}
+                             updateContent={this.handleContentChange} />
             </div>
         )
     },
@@ -231,8 +188,7 @@ EditEvent = React.createClass({
                 {this.renderOptions()}
                 {this.renderDatePicker()}
                 {this.renderTitleEditor()}
-                {this.renderContentEditors()}
-                {this.renderEditorContentSelector()}
+                {this.renderContentEditor()}
                 {this.renderPathSelector()}
                 {this.renderEditorPublicSelector()}
             </div>

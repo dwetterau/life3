@@ -4,7 +4,6 @@ import DraftJS, {Entity} from "draft-js"
 
 getEmptyChecklistContent = () => {
     return {
-        _id: uuid.v4(),
         itemRows: [getEmptyChecklistItemRow()]
     };
 };
@@ -31,7 +30,6 @@ Checklist = React.createClass({
 
     _getStateFromProps(props) {
         const data = Entity.get(props.block.getEntityAt(0)).getData();
-        this._id = data._id;
         let itemRows = data.itemRows.map(function(itemRow) {
             return {
                 _id: itemRow._id,
@@ -62,7 +60,6 @@ Checklist = React.createClass({
     handleContentUpdate(newItemRows) {
         const entityKey = this.props.block.getEntityAt(0);
         Entity.replaceData(entityKey, {
-            _id: this._id,
             itemRows: newItemRows
         });
         this.setState({itemRows: newItemRows});

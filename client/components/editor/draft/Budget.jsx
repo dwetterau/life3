@@ -4,8 +4,6 @@ import DraftJS, {Entity} from "draft-js"
 
 getEmptyBudgetContent = () => {
     return {
-        _id: uuid.v4(),
-        type: contentTypes.budget,
         payee: "",
         itemRows: [getEmptyBudgetItemRow()]
     };

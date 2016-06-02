@@ -62,25 +62,6 @@ div.page-container {
   width: 768px;
 }
 
-.editor-selector-container {
-  display: flex;
-  justify-content: center;
-}
-
-.editor-selector-tile {
-  width: 100px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin: .5em 0;
-}
-
-.editor-selector-container :hover {
-  background-color: rgba(0, 0, 0, .04);
-}
-
 div.editor-public-container a {
   cursor: pointer;
   color: rgba(0, 0, 0, .6);
@@ -89,26 +70,6 @@ div.editor-public-container a {
 div.editor-public-container a:hover {
   color: rgba(0, 0, 0, .8);
 }
-
-/* CSS for content options */
-div.content-options-menu {
-  display: flex;
-  justify-content: flex-end;
-}
-
-div.content-options-menu a {
-  cursor: pointer;
-  color: rgba(0, 0, 0, .6);
-}
-
-div.content-options-menu a:hover {
-  color: rgba(0, 0, 0, .8);
-}
-
-div.content-options-menu a:focus {
-  color: rgba(0, 0, 0, .8);
-}
-/* End of CSS for content options */
 
 /* CSS for the logged in page header */
 div.create-new-button {
