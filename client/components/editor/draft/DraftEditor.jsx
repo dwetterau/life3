@@ -151,9 +151,9 @@ DraftEditor = React.createClass({
     // Editor buttons
     // Inline styles
     inlineStyleOptions: [
-        {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'},
+        {label: 'B', style: 'BOLD'},
+        {label: 'I', style: 'ITALIC'},
+        {label: 'U', style: 'UNDERLINE'},
         {label: 'Code', style: 'CODE'}
     ],
 
@@ -190,7 +190,7 @@ DraftEditor = React.createClass({
         {label: 'H1', style: 'header-one'},
         {label: 'H2', style: 'header-two'},
         {label: 'H3', style: 'header-three'},
-        {label: 'Blockquote', style: 'blockquote'},
+        {label: 'Quote', style: 'blockquote'},
         {label: 'UL', style: 'unordered-list-item'},
         {label: 'OL', style: 'ordered-list-item'},
         {label: 'Code Block', style: 'code-block'}
@@ -292,6 +292,27 @@ DraftEditor = React.createClass({
         })
     },
 
+    createLocationBlock() {
+        const entityKey = DraftJS.Entity.create(
+            'location',
+            'IMMUTABLE',
+            {
+                query: this.state.urlValue
+            }
+        );
+
+        const editorState = DraftJS.AtomicBlockUtils.insertAtomicBlock(
+            this.state.editorState,
+            entityKey,
+            ' '
+        );
+        this.onChange(editorState, {
+            editingLink: false,
+            urlValue: '',
+            createFunc: null
+        })
+    },
+    
     createChecklistBlock() {
         const entityKey = DraftJS.Entity.create(
             'checklist',
@@ -362,7 +383,19 @@ DraftEditor = React.createClass({
             </div>
         )
     },
-
+    
+    renderLocationButton() {
+        return (
+            <div className="location-button-container">
+                <div className="location-button"
+                     onClick={this.promptForLink.bind(this,
+                        this.createLocationBlock)} >
+                    Place
+                </div>
+            </div>
+        )
+    },
+    
     renderChecklistButton() {
         return (
             <div className="checklist-button-container">
@@ -395,6 +428,7 @@ DraftEditor = React.createClass({
                 {this.renderBlockButtons()}
                 {this.renderLinkButton()}
                 {this.renderImageButton()}
+                {this.renderLocationButton()}
                 {this.renderChecklistButton()}
                 {this.renderBudgetButton()}
             </div>
@@ -413,6 +447,12 @@ DraftEditor = React.createClass({
                         readOnly: this.props.readOnly
                     }
                 };
+            } else if (entityType == "location") {
+                return {
+                    component: Location,
+                    editable: false,
+                    props: {}
+                }
             } else if (entityType == "checklist") {
                 return {
                     component: Checklist,

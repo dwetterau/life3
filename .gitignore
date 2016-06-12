@@ -2,3 +2,4 @@
 .meteor/
 packages/
 node_modules/
+settings.json

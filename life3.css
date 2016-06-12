@@ -179,6 +179,10 @@ div.link-editor a {
   cursor: pointer;
 }
 
+div.location-container {
+  display: flex;
+  justify-content: space-around;
+}
 
 /* End of CSS for draft.js based editor */
 
@@ -205,6 +209,143 @@ div.budget-content-editor table td {
   padding: 0;
 }
 
+/* Budget CSS */
+table.budget-items {
+  width: 100%;
+}
+
+table.budget-items td:first-child {
+  width: 75%;
+}
+
+table.budget-items td input {
+  margin: 0 0 0 1em;
+  padding: 0;
+  height: 22px;
+}
+
+div.budget-description-container div.public-DraftEditor-content {
+  min-height: 0;
+  margin: 0;
+}
+
+div.event-budget-item-rows {
+  border-bottom: 1px solid rgba(0, 0, 0, .16);
+}
+
+div.event-budget-item-rows .budget-item-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+div.budget-item-row-header {
+  display: flex;
+}
+
+div.budget-item-row-header div.budget-item-row-source {
+  font-weight: bold;
+  width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+div.budget-item-row-header div.budget-item-row-description {
+  padding-left: 1em;
+}
+
+div.event-budget-total {
+  text-align: right;
+}
+
+div.budget-value {
+  color: #2ecc71;
+}
+
+div.budget-value.-negative {
+  color: #e74c3c;
+}
+
+/* End of Budget CSS */
+
+/* Checklist editor CSS */
+div.checklist-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+div.checklist-row div.checklist-description-container {
+  display: flex;
+  flex-grow: 1;
+  height: 25px;
+}
+
+div.checklist-row div.checklist-description-container .draft-editor {
+  width: 100%;
+}
+
+div.checklist-row div.public-DraftEditor-content {
+  min-height: 0;
+}
+
+div.checklist-row div.checklist-checkbox-container {
+  width: 1em;
+  height: 1em;
+  margin-right: .5em;
+}
+
+div.checklist-row div.checklist-item-row-delete-button {
+  margin-left: .5em;
+  cursor: pointer;
+}
+
+/* Rendered Checklist CSS */
+div.event-checklist div.checklist-item-row {
+  display: flex;
+}
+
+div.event-checklist div.checklist-item-row.-done {
+  color: rgba(0, 0, 0, .5);
+  text-decoration: line-through;
+}
+
+/* Rendered Photo CSS */
+div.photo-container.default {
+  display: flex;
+  justify-content: space-around;
+  background-color: rgba(0, 0, 0, .16);
+  margin: 0 -20px;
+}
+
+div.photo-container.default img {
+  max-width: 100%;
+  max-height: 480px;
+}
+
+div.photo-container.inline50 {
+  max-width: 50%;
+  float: left;
+  margin-bottom: -5px;
+  margin-right: .5em;
+}
+
+div.photo-container.inline50 img {
+  max-width: 100%;
+  max-height: 240px;
+}
+
+div.photo-container.inline25 {
+  max-width: 25%;
+  float: left;
+  margin-bottom: -5px;
+  margin-right: .5em;
+}
+
+div.photo-container.inline25 img {
+  max-width: 100%;
+  max-height: 120px;
+}
+
 div.event-editor input {
   width: 100%;
   border: none;
@@ -213,12 +354,6 @@ div.event-editor input {
   margin-bottom: 1em;
 }
 
-div.date-picker select {
-  background: none;
-  outline: none;
-  border: none;
-  font-family: 'Crimson Text', 'serif';
-}
 
 /* CSS for the path editor */
 div.path-editor {
@@ -314,65 +449,12 @@ div.event-header div.event-date {
   font-style: italic;
 }
 
-/* Budget CSS */
-table.budget-items {
-  width: 100%;
+div.date-picker select {
+  background: none;
+  outline: none;
+  border: none;
+  font-family: 'Crimson Text', 'serif';
 }
-
-table.budget-items td:first-child {
-  width: 75%;
-}
-
-table.budget-items td input {
-  margin: 0 0 0 1em;
-  padding: 0;
-  height: 22px;
-}
-
-div.budget-description-container div.public-DraftEditor-content {
-  min-height: 0;
-  margin: 0;
-}
-
-
-div.event-budget-item-rows {
-  border-bottom: 1px solid rgba(0, 0, 0, .16);
-}
-
-div.event-budget-item-rows .budget-item-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-div.budget-item-row-header {
-  display: flex;
-}
-
-div.budget-item-row-header div.budget-item-row-source {
-  font-weight: bold;
-  width: 150px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-div.budget-item-row-header div.budget-item-row-description {
-  padding-left: 1em;
-}
-
-div.event-budget-total {
-  text-align: right;
-}
-
-div.budget-value {
-  color: #2ecc71;
-}
-
-div.budget-value.-negative {
-  color: #e74c3c;
-}
-
-/* End of Budget CSS */
 
 div.date-picker {
   margin-bottom: .5em;
@@ -384,84 +466,6 @@ div.date-picker select:first-child {
 
 div.date-picker .day-suffix-text {
   margin-right: .5em;
-}
-
-/* Checklist editor CSS */
-div.checklist-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-div.checklist-row div.checklist-description-container {
-  display: flex;
-  flex-grow: 1;
-  height: 25px;
-}
-
-div.checklist-row div.checklist-description-container .draft-editor {
-  width: 100%;
-}
-
-div.checklist-row div.public-DraftEditor-content {
-  min-height: 0;
-}
-
-div.checklist-row div.checklist-checkbox-container {
-  width: 1em;
-  height: 1em;
-  margin-right: .5em;
-}
-
-div.checklist-row div.checklist-item-row-delete-button {
-  margin-left: .5em;
-  cursor: pointer;
-}
-
-/* Rendered Checklist CSS */
-div.event-checklist div.checklist-item-row {
-  display: flex;
-}
-
-div.event-checklist div.checklist-item-row.-done {
-  color: rgba(0, 0, 0, .5);
-  text-decoration: line-through;
-}
-
-/* Rendered Photo CSS */
-div.photo-container.default {
-  display: flex;
-  justify-content: space-around;
-  background-color: rgba(0, 0, 0, .16);
-  margin: 0 -20px;
-}
-
-div.photo-container.default img {
-  max-width: 100%;
-  max-height: 480px;
-}
-
-div.photo-container.inline50 {
-  max-width: 50%;
-  float: left;
-  margin-bottom: -5px;
-  margin-right: .5em;
-}
-
-div.photo-container.inline50 img {
-  max-width: 100%;
-  max-height: 240px;
-}
-
-div.photo-container.inline25 {
-  max-width: 25%;
-  float: left;
-  margin-bottom: -5px;
-  margin-right: .5em;
-}
-
-div.photo-container.inline25 img {
-  max-width: 100%;
-  max-height: 120px;
 }
 
 .clearfix:after {
