@@ -90,262 +90,6 @@ div.create-new-button a:focus {
 }
 /* End of CSS for the logged in page header */
 
-/* CSS for draft.js based editor */
-div.text-content-editor .public-DraftEditor-content {
-  min-height: 100px;
-  border-bottom: solid 1px rgba(0, 0, 0, .16);
-  margin-bottom: 1em;
-}
-
-/* Removes bounding box for images */
-.public-DraftEditor-content figure {
-  margin: 0;
-}
-
-/* Clearfix the bottom of all editors */
-.public-DraftEditor-content:after {
-  content: " "; /* Older browser do not support empty content */
-  visibility: hidden;
-  display: block;
-  height: 0;
-  clear: both;
-}
-
-div .public-DraftEditorPlaceholder-root {
-  position: absolute;
-  pointer-events: none;
-  color: rgba(0, 0, 0, .4);
-  z-index: 0;
-}
-
-div .-hide-placeHolder .public-DraftEditorPlaceholder-root {
-  display: none;
-}
-
-div .draft-editor {
-  position: relative;
-}
-
-div .draft-editor-buttons {
-  display: flex;
-  border-bottom: solid 1px rgba(0, 0, 0, .16);
-}
-
-div .draft-editor-buttons div {
-  display: flex;
-  justify-content: space-between;
-}
-
-div .draft-editor-buttons div div {
-  cursor: pointer;
-  margin-right: 1em;
-}
-
-div .draft-editor-buttons div div:hover {
-  background-color: rgba(0, 0, 0, .04);
-}
-
-div .draft-editor-buttons div div.-active {
-  background-color: rgba(0, 0, 0, .08);
-  font-weight: 400;
-}
-
-div.public-DraftEditor-content h1 {
-  margin-bottom: 0;
-}
-
-div.public-DraftEditor-content h2 {
-  margin-bottom: 0;
-}
-
-div.public-DraftEditor-content h3 {
-  margin-bottom: 0;
-}
-
-/* CSS for editing links */
-div.link-editor {
-  position: absolute;
-  width: 50%;
-  display: flex;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, .04);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
-  padding: 1em;
-  z-index: 10;
-}
-
-div.link-editor a {
-  margin-left: 1em;
-  cursor: pointer;
-}
-
-div.location-container {
-  display: flex;
-  justify-content: space-around;
-}
-
-/* End of CSS for draft.js based editor */
-
-div.budget-content-editor {
-  margin-bottom: 1em;
-}
-
-div.budget-content-editor input.budget-payee-editor {
-  width: 100%;;
-  border: none;
-  border-bottom: solid 1px rgba(0, 0, 0, .16);
-  outline: none;
-  margin-bottom: 1em;
-}
-
-div.budget-content-editor table {
-  border: none;
-  border-collapse: collapse;
-  padding: 0;
-  margin: 0;
-}
-
-div.budget-content-editor table td {
-  padding: 0;
-}
-
-/* Budget CSS */
-table.budget-items {
-  width: 100%;
-}
-
-table.budget-items td:first-child {
-  width: 75%;
-}
-
-table.budget-items td input {
-  margin: 0 0 0 1em;
-  padding: 0;
-  height: 22px;
-}
-
-div.budget-description-container div.public-DraftEditor-content {
-  min-height: 0;
-  margin: 0;
-}
-
-div.event-budget-item-rows {
-  border-bottom: 1px solid rgba(0, 0, 0, .16);
-}
-
-div.event-budget-item-rows .budget-item-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-div.budget-item-row-header {
-  display: flex;
-}
-
-div.budget-item-row-header div.budget-item-row-source {
-  font-weight: bold;
-  width: 150px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-div.budget-item-row-header div.budget-item-row-description {
-  padding-left: 1em;
-}
-
-div.event-budget-total {
-  text-align: right;
-}
-
-div.budget-value {
-  color: #2ecc71;
-}
-
-div.budget-value.-negative {
-  color: #e74c3c;
-}
-
-/* End of Budget CSS */
-
-/* Checklist editor CSS */
-div.checklist-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-div.checklist-row div.checklist-description-container {
-  display: flex;
-  flex-grow: 1;
-  height: 25px;
-}
-
-div.checklist-row div.checklist-description-container .draft-editor {
-  width: 100%;
-}
-
-div.checklist-row div.public-DraftEditor-content {
-  min-height: 0;
-}
-
-div.checklist-row div.checklist-checkbox-container {
-  width: 1em;
-  height: 1em;
-  margin-right: .5em;
-}
-
-div.checklist-row div.checklist-item-row-delete-button {
-  margin-left: .5em;
-  cursor: pointer;
-}
-
-/* Rendered Checklist CSS */
-div.event-checklist div.checklist-item-row {
-  display: flex;
-}
-
-div.event-checklist div.checklist-item-row.-done {
-  color: rgba(0, 0, 0, .5);
-  text-decoration: line-through;
-}
-
-/* Rendered Photo CSS */
-div.photo-container.default {
-  display: flex;
-  justify-content: space-around;
-  background-color: rgba(0, 0, 0, .16);
-  margin: 0 -20px;
-}
-
-div.photo-container.default img {
-  max-width: 100%;
-  max-height: 480px;
-}
-
-div.photo-container.inline50 {
-  max-width: 50%;
-  float: left;
-  margin-bottom: -5px;
-  margin-right: .5em;
-}
-
-div.photo-container.inline50 img {
-  max-width: 100%;
-  max-height: 240px;
-}
-
-div.photo-container.inline25 {
-  max-width: 25%;
-  float: left;
-  margin-bottom: -5px;
-  margin-right: .5em;
-}
-
-div.photo-container.inline25 img {
-  max-width: 100%;
-  max-height: 120px;
-}
-
 div.event-editor input {
   width: 100%;
   border: none;
@@ -353,7 +97,6 @@ div.event-editor input {
   outline: none;
   margin-bottom: 1em;
 }
-
 
 /* CSS for the path editor */
 div.path-editor {
@@ -433,6 +176,18 @@ div.event-title-editor {
   margin-top: 0;
   font-size: 2em;
   font-weight: bold;
+}
+
+div.event-title .public-DraftEditor-content {
+  min-height: 0;
+  border: none;
+  margin-bottom: 0;
+}
+
+div.event-title-editor .public-DraftEditor-content {
+  min-height: 0;
+  border: none;
+  margin-bottom: 0;
 }
 
 div.event-path {

@@ -24,14 +24,20 @@ DraftEditor = React.createClass({
         handleBackspace: React.PropTypes.func
     },
 
+    editingTextTypes: {
+        LINK: "link",
+        LOCATION: "location"
+    },
+
     getInitialState() {
         // Convert the markdown text to an initial content object
         const editorState = this.getInitialEditorState(this.props.text);
         return {
             editorState,
             // State for link editing
-            editingLink: false,
-            urlValue: '',
+            editingText: false,
+            editingTextType: this.editingTextTypes.LINK,
+            textValue: '',
             tempReadOnly: false
         };
     },
@@ -225,19 +231,20 @@ DraftEditor = React.createClass({
     },
 
     // Other custom styles
-    promptForLink(createFunc) {
+    promptForText(createFunc, type) {
         this.setState({
-            editingLink: !this.state.editingLink,
-            urlValue: '',
+            editingText: !this.state.editingText,
+            editingTextType: type,
+            textValue: '',
             createFunc: createFunc
         })
     },
 
-    handleUrlChange(e) {
-        this.setState({urlValue: e.target.value})
+    handleTextChange(e) {
+        this.setState({textValue: e.target.value})
     },
 
-    handleUrlKeyDown(e, createFunc) {
+    handleTextKeyDown(e, createFunc) {
         if (e.which === 13) {
             createFunc();
         }
@@ -255,7 +262,7 @@ DraftEditor = React.createClass({
 
     createNewLink() {
         const entityKey = DraftJS.Entity.create('LINK', 'IMMUTABLE', {
-            url: this.state.urlValue});
+            url: this.state.textValue});
         this.onChange(
             DraftJS.RichUtils.toggleLink(
                 this.state.editorState,
@@ -263,8 +270,8 @@ DraftEditor = React.createClass({
                 entityKey
             ),
             {
-                editingLink: false,
-                urlValue: '',
+                editingText: false,
+                textValue: '',
                 createFunc: null
             }
         );
@@ -275,7 +282,7 @@ DraftEditor = React.createClass({
             'image',
             'IMMUTABLE',
             {
-                src: this.state.urlValue,
+                src: this.state.textValue,
                 viewMode: "default"
             }
         );
@@ -286,8 +293,8 @@ DraftEditor = React.createClass({
             ' '
         );
         this.onChange(editorState, {
-            editingLink: false,
-            urlValue: '',
+            editingText: false,
+            textValue: '',
             createFunc: null
         })
     },
@@ -297,7 +304,7 @@ DraftEditor = React.createClass({
             'location',
             'IMMUTABLE',
             {
-                query: this.state.urlValue
+                query: this.state.textValue
             }
         );
 
@@ -307,8 +314,8 @@ DraftEditor = React.createClass({
             ' '
         );
         this.onChange(editorState, {
-            editingLink: false,
-            urlValue: '',
+            editingText: false,
+            textValue: '',
             createFunc: null
         })
     },
@@ -343,14 +350,26 @@ DraftEditor = React.createClass({
         this.onChange(editorState);
     },
 
-    renderLinkPrompt() {
-        if (!this.state.editingLink) return;
+    renderTextPrompt() {
+        if (!this.state.editingText) return;
+
+        let placeholder;
+        switch (this.state.editingTextType) {
+            case this.editingTextTypes.LINK:
+                placeholder = "Type link here...";
+                break;
+            case this.editingTextTypes.LOCATION:
+                placeholder = "Type location here...";
+                break;
+            default:
+                placeholder = ""
+        }
         return (
-            <div className="link-editor">
-                <input type="text" placeholder="Type link here.."
-                       value={this.state.urlValue}
-                       onChange={this.handleUrlChange}
-                       onKeyDown={this.handleUrlKeyDown.bind(
+            <div className="prompt-text-editor">
+                <input type="text" placeholder={placeholder}
+                       value={this.state.textValue}
+                       onChange={this.handleTextChange}
+                       onKeyDown={this.handleTextKeyDown.bind(
                             this,
                             this.state.createFunc
                        )}
@@ -364,8 +383,9 @@ DraftEditor = React.createClass({
         return (
             <div className="link-button-container">
                 <div className="link-button"
-                     onClick={this.promptForLink.bind(this,
-                        this.createNewLink)} >
+                     onClick={this.promptForText.bind(this,
+                        this.createNewLink,
+                        this.editingTextTypes.LINK)} >
                     Link
                 </div>
             </div>
@@ -376,8 +396,9 @@ DraftEditor = React.createClass({
         return (
             <div className="image-button-container">
                 <div className="image-button"
-                     onClick={this.promptForLink.bind(this,
-                        this.createImageBlock)} >
+                     onClick={this.promptForText.bind(this,
+                        this.createImageBlock,
+                        this.editingTextTypes.LINK)} >
                     Image
                 </div>
             </div>
@@ -388,8 +409,9 @@ DraftEditor = React.createClass({
         return (
             <div className="location-button-container">
                 <div className="location-button"
-                     onClick={this.promptForLink.bind(this,
-                        this.createLocationBlock)} >
+                     onClick={this.promptForText.bind(this,
+                        this.createLocationBlock,
+                        this.editingTextTypes.LOCATION)} >
                     Place
                 </div>
             </div>
@@ -507,7 +529,7 @@ DraftEditor = React.createClass({
         return (
             <div className={className}>
                 {this.renderEditorButtons()}
-                {this.renderLinkPrompt()}
+                {this.renderTextPrompt()}
                 <DraftJS.Editor
                     ref="editor"
                     blockRendererFn={this.mediaBlockRenderer}
