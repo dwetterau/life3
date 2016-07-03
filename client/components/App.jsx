@@ -49,22 +49,25 @@ App = React.createClass({
             }
         } else if (this.props.username) {
             // Trying to look at a user but not loaded yet... keep waiting
+        } else if (this.props.eventId) {
+            // We're looking at an eventId but are not logged in yet or are
+            // logged out. Doesn't really matter though, so just don't do
+            // anything.
 
         } else {
-            // We're looking at root. If we're logged in and not looking at an
-            // event, we should redirect.
+            // We're looking at root. If we're logged in we should redirect to
+            // our own profile. If we aren't logging in, go to the welcome page.
             if (!currentUser) {
                 if (Meteor.loggingIn()) {
-                    // Still logging in, don't redirect yet
+                    // Still logging in, don't redirect to anything
+
                 } else {
                     // We're not logging in and not logged in, redirect to
                     // the welcome page
                     this.redirectToWelcome();
                 }
             } else {
-                if (!this.props.eventId) {
-                    this.redirectToUser();
-                }
+                this.redirectToUser();
             }
         }
 
