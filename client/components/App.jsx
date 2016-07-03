@@ -20,12 +20,13 @@ App = React.createClass({
     },
 
     getMeteorData() {
-        Meteor.subscribe("users");
-        Meteor.subscribe("events");
+        const userSubscriber = Meteor.subscribe("users");
+        const eventSubscriber = Meteor.subscribe("events");
+
         let isFetchedUser = false;
         let currentUser = Meteor.user();
         let fetchedUser = null;
-        if (this.props.username) {
+        if (this.props.username && userSubscriber.ready()) {
             // There is a username in the url
             fetchedUser = Meteor.users.findOne({
                 username: this.props.username
@@ -34,35 +35,58 @@ App = React.createClass({
                 if (currentUser) {
                     // Logged in, check if we are looking at some other user
                     isFetchedUser = this.props.username == currentUser.username;
+                } else if (Meteor.loggingIn()) {
+                    // Not logged in yet, but looking at a real user render
+                    // in the logged out view
+                    isFetchedUser = false;
                 } else {
                     // Not logged in, and looking at a real user
                     isFetchedUser = false;
                 }
             } else {
+                // User was not found, redirect to a 404
                 this.redirectTo404();
             }
+        } else if (this.props.username) {
+            // Trying to look at a user but not loaded yet... keep waiting
+
         } else {
             // We're looking at root. If we're logged in and not looking at an
             // event, we should redirect.
-            if (!this.props.eventId && currentUser) {
-                this.redirectToUser();
+            if (!currentUser) {
+                if (Meteor.loggingIn()) {
+                    // Still logging in, don't redirect yet
+                } else {
+                    // We're not logging in and not logged in, redirect to
+                    // the welcome page
+                    this.redirectToWelcome();
+                }
+            } else {
+                if (!this.props.eventId) {
+                    this.redirectToUser();
+                }
             }
         }
 
         let events = [];
-        if (fetchedUser) {
-            events = Events.find({owner: fetchedUser._id}).fetch()
-        } else if (this.props.eventId) {
-            events = Events.find({_id: this.props.eventId}).fetch()
-        } else if (window.location.pathname != "/welcome") {
-            // Redirect to welcome if we have nothing else to show.
-            // TODO: This doesn't work on mobile either :(
+        let eventsLoaded = eventSubscriber.ready();
+        if (eventsLoaded) {
+            if (fetchedUser) {
+                events = Events.find({owner: fetchedUser._id}).fetch()
+            } else if (this.props.eventId) {
+                events = Events.find({_id: this.props.eventId}).fetch();
+                if (events.length == 0) {
+                    // Event was not found
+                    this.redirectTo404()
+                }
+            }
         }
         return {
             events: events,
             currentUser: currentUser,
             fetchedUser: fetchedUser,
-            isFetchedUser: isFetchedUser
+            isFetchedUser: isFetchedUser,
+            eventsLoaded: eventsLoaded
         }
     },
 
@@ -82,17 +106,21 @@ App = React.createClass({
         window.location = "/";
     },
 
-    redirectTo404: _.debounce(function() {
-        // TODO: do something smarter here where we check that we've fully
-        // published the users dict and the user in question still doesn't
-        // exist.
-        if (!this.data.fetchedUser) {
-            window.location = "/404"
-        }
-    }, 2000),
+    redirectToWelcome() {
+        window.location = "/welcome";
+    },
+
+    redirectTo404() {
+        window.location = "/404"
+    },
 
     redirectToUser() {
-        window.location = "/u/" + encodeURIComponent(Meteor.user().username)
+        const url = "/u/" + encodeURIComponent(Meteor.user().username);
+        if (window.history.hasOwnProperty("pushState")) {
+            window.history.pushState({}, "lens - david", url);
+            return
+        }
+        window.location = url
     },
 
     debouncedExtendEvents: _.debounce(function() {
@@ -222,7 +250,8 @@ App = React.createClass({
 
     renderEventPage() {
         const eventsById = this._getEventsById();
-        if (!eventsById.hasOwnProperty(this.props.eventId)) {
+        if (!eventsById.hasOwnProperty(this.props.eventId) &&
+                !this.data.eventsLoaded) {
             return "Loading...";
         }
         const event = eventsById[this.props.eventId];

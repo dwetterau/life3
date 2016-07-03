@@ -62,14 +62,12 @@ class SearchService {
         }
         let allText = "";
         event.contents.forEach((content) => {
-            if (content.type == "text") {
-                if (typeof(content.description) == "string") {
-                    allText += content.description + " ";
-                } else {
-                    const contentState = DraftJS.convertFromRaw(
-                        content.description);
-                    allText += contentState.getPlainText() + " ";
-                }
+            if (typeof(content.description) == "string") {
+                allText += content.description + " ";
+            } else {
+                const contentState = DraftJS.convertFromRaw(
+                    content.description);
+                allText += contentState.getPlainText() + " ";
             }
         });
         allText = allText.trim();

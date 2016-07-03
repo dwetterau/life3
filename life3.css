@@ -59,7 +59,7 @@ div.card {
 
 div.page-container {
   margin: auto;
-  width: 768px;
+  max-width: 768px;
 }
 
 div.editor-public-container a {
