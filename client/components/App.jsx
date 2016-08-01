@@ -15,7 +15,8 @@ App = React.createClass({
     getInitialState() {
         return {
             maxEventIndex: 10, // Used for infinite scroll
-            eventEditorOpen: false // Used for creating new events
+            eventEditorOpen: false, // Used for creating new events
+            inlineEventEditorId: null
         }
     },
 
@@ -150,6 +151,23 @@ App = React.createClass({
         this.setState({eventEditorOpen: !this.state.eventEditorOpen});
     },
 
+    toggleInlineEventEdit(id) {
+        let newId;
+        if (this.state.inlineEventEditorId) {
+            if (this.state.inlineEventEditorId != id) {
+                throw Error("Already editing event inline.")
+            }
+            newId = null
+        } else {
+            newId = id
+        }
+        this.setState({inlineEventEditorId: newId})
+    },
+
+    isInlineEditing(event) {
+        return this.state.inlineEventEditorId == event._id;
+    },
+
     renderOpenEditorButton() {
         // If we aren't on our own page and logged in, we can't create a new
         // event here anyway.
@@ -230,6 +248,8 @@ App = React.createClass({
             renderedEvents.push(
                 <Event key={event._id}
                        isFetchedUser={this.data.isFetchedUser}
+                       toggleEditMode={this.toggleInlineEventEdit}
+                       inEditMode={this.isInlineEditing(event)}
                        fetchedUser={this.data.fetchedUser}
                        event={event} />
             );
@@ -269,6 +289,8 @@ App = React.createClass({
                 <Event key={event._id}
                        isFetchedUser={isFetchedUser}
                        fetchedUser={fetchedUser}
+                       toggleEditMode={this.toggleInlineEventEdit}
+                       inEditMode={this.isInlineEditing(event)}
                        event={event} />
             </div>
         )

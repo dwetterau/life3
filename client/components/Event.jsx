@@ -6,6 +6,9 @@ Event = React.createClass({
         event: React.PropTypes.object.isRequired,
         isFetchedUser: React.PropTypes.bool.isRequired,
 
+        toggleEditMode: React.PropTypes.func.isRequired,
+        inEditMode: React.PropTypes.bool.isRequired,
+
         // Only required if we are the fetchedUser
         fetchedUser: React.PropTypes.object
     },
@@ -20,13 +23,12 @@ Event = React.createClass({
 
     _getNewStateFromProps(props) {
         return {
-            event: props.event,
-            inEditMode: false
+            event: props.event
         }
     },
 
     toggleEditMode() {
-        this.setState({inEditMode: !this.state.inEditMode});
+        this.props.toggleEditMode(this.props.event._id)
     },
 
     updateEvent(eventId, newEvent) {
@@ -46,7 +48,7 @@ Event = React.createClass({
 
     renderOptions() {
         return <EventOptions creating={false}
-                             editing={this.state.inEditMode}
+                             editing={this.props.inEditMode}
                              isFetchedUser={this.props.isFetchedUser}
                              saveOrEditFunc={this.toggleEditMode}
                              deleteFunc={this.deleteEvent}
@@ -100,7 +102,7 @@ Event = React.createClass({
     },
 
     renderEvent() {
-        if (!this.state.inEditMode) {
+        if (!this.props.inEditMode) {
             return (
                 <div className="rendered-event-container">
                     {this.renderOptions()}
